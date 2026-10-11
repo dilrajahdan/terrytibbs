@@ -67,10 +67,10 @@ This guide builds the current app from source. A signed public installer is not 
 
    Node must be 22.12 or newer. Keep using this Terminal for the remaining commands; the `export` applies to this session. The engine package is now called **whisper.cpp**; **whisper-cpp** is its former name. [Official Homebrew formula](https://formulae.brew.sh/formula/whisper.cpp)
 
-3. Enter the extracted source and install its pinned JavaScript dependencies:
+3. If you used GitHub’s Download ZIP and extracted it in Downloads, enter that folder and install its pinned JavaScript dependencies. If you cloned the repository instead, stay in your clone and run only `npm ci`:
 
    ```sh
-   cd /path/to/your/terrytibbs
+   cd "$HOME/Downloads/terrytibbs-main"
    npm ci
    ```
 

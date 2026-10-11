@@ -53,8 +53,8 @@ The exporter checks local home paths, credential patterns and optional locally s
 
 ## Public launch gates
 
-1. Source published as DilrajAhdan/terrytibbs using a GitHub no-reply author identity. Confirm the private security-reporting channel.
-2. Keep private development history out of the public repository. Enable private vulnerability reporting and verify public CI.
+1. Source published as DilrajAhdan/terrytibbs using a GitHub no-reply author identity. Private vulnerability reporting is enabled on GitHub.
+2. Keep private development history out of the public repository. Verify public CI on the exact release commit.
 3. Bundle a pinned ARM64 whisper.cpp runtime and its required libraries, with licences/checksums. Offer a smaller first-run model option for 8 GB hardware.
 4. Configure Developer ID signing, hardened runtime and Apple notarisation for app and helpers. These require the owner's Apple credentials; current builds explicitly disable signing.
 5. Test download, Gatekeeper launch, permissions, model download, two successive dictations, lock/unlock, silence, restart, upgrade and uninstall on a fresh Mac with no Homebrew or Node installed.
