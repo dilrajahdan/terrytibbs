@@ -9,3 +9,10 @@ This tooling records the real development app with a temporary profile. It is no
 4. Inspect each chapter, the audio and caption timing. Check settings show the intended control and the transcript matches the sample. Publish only the reviewed MP4 and poster to public media hosting. Update `docs/tutorial-media.json` and the README links.
 
 All raw captures, speech files and temporary profiles stay outside Git. Do not record a personal profile. The video does not benchmark latency: gaps are edited and final frames are held for narration.
+
+## Short cut
+
+1. Generate the short narration with `node scripts/tutorial/narrate.mjs --short`.
+2. Supply a reviewed opener as `artifacts/short/opener.wav`. This audio is not bundled or covered by the source licence.
+3. With `TERRY_DEMO_MODEL` set, run `node scripts/tutorial/capture-short.mjs --rehearse`, then without `--rehearse`. This opens a separate disposable editor and verifies real native paste into its text field. Electron and the native helper need Accessibility permission. No physical key press is claimed.
+4. Run `python3 scripts/tutorial/render-short.py`. Inspect `artifacts/short/terry-tibbs-short.mp4`. The 19-second cut edits timing, includes a supplied opener, and ends with the source-install requirement.

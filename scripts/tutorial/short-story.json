@@ -1,0 +1,6 @@
+[
+ {"id":"choose","title":"Choose a shortcut. Save.","text":"Choose a shortcut. Save it."},
+ {"id":"dictate","title":"Click. Hold. Speak. Release.","text":"Click a text box. Hold your shortcut, speak, then release. Your words appear."},
+ {"id":"handsfree","title":"Double-tap to lock","text":"Double-tap to lock. Talk hands-free. Press again to finish."},
+ {"id":"install","title":"Open source. Install it now.","text":"Free and open source. Install it now."}
+]

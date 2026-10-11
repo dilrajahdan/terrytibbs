@@ -1,6 +1,6 @@
-# Terry in a minute or two
+# Terry in 19 seconds
 
-[Watch the 85-second tutorial](https://amopqrboxtncgxjaqitq.supabase.co/storage/v1/object/public/marketing/tutorials/terrytibbs/0.6.4/terry-tibbs-tutorial.mp4) · [Download captions](tutorial-captions.srt)
+[Watch the 19-second tutorial](https://amopqrboxtncgxjaqitq.supabase.co/storage/v1/object/public/marketing/tutorials/terrytibbs/0.6.4/terry-tibbs-short.mp4?v=2) · [Download captions](tutorial-captions.srt)
 
 **What does it do?** Turns speech into text on your Mac, copies it, and attempts to paste into the text box where you started. It never sends your message.
 
@@ -34,32 +34,20 @@
 
 ## About the recording
 
-The video shows version 0.6.4 with an isolated demonstration profile. The speech example is prerecorded synthetic speech passed through the real capture and local Whisper Turbo pipeline. Shortcut gestures enter the app at its test-only event boundary. The resulting transcript and clipboard value are checked; this is not a test of a physical keyboard or an external application's automatic paste. Pauses are edited for clarity, so the video is not a latency benchmark.
+The short video shows version 0.6.4 with an isolated demonstration profile and a separate local text editor. A prerecorded sample passes through the real capture and local Whisper Turbo pipeline. The production native helper pastes the result into the editor, and the test checks the actual inserted text for both hold/release and locked recording. Shortcut gestures enter at the test-only event boundary, so this does not demonstrate physical keyboard detection. Timing is edited.
 
-Narration is generated with ElevenLabs George. This is production tooling for the tutorial only. Terry's dictation does not use ElevenLabs or any cloud transcription service.
+The brief “Talk to me” opener uses a supplied clip. It is not bundled with the app or included in the MIT source licence. Tutorial narration uses ElevenLabs George; ordinary dictation remains offline.
 
 ## Video transcript
 
-### Speak. Terry types.
+“Talk to me!”
 
-Terry Tibbs turns your speech into text on your Mac. Hold a shortcut, speak, then release. It copies your words and tries to paste them into the text box where you started. No send button is pressed.
+Choose a shortcut. Save it.
 
-### 1. Choose your shortcut
+Click a text box. Hold your shortcut, speak, then release. Your words appear.
 
-First, open Settings. Record a shortcut, or choose Globe and Function. Pick your microphone and use Test input to check it. Save your settings. Allow Microphone and Accessibility when macOS asks.
+Double-tap to lock. Talk hands-free. Press again to finish.
 
-### 2. Hold. Speak. Release.
+Free and open source. Install it now.
 
-Click the text box you want to write in. Hold your shortcut and speak when Terry is listening. Release to finish. This demonstration feeds a prerecorded sentence through the real local speech engine.
-
-### 3. Your words are ready
-
-Here is the actual result. If Terry says Copied only, your words are still safe on the clipboard. Click the text box and press Command V. Check Accessibility and keep the original app focused for automatic paste.
-
-### Hands free: double-tap to lock
-
-For longer thoughts, double-tap your shortcut. Locked means you can let go and keep talking. Press once more to finish. Press Escape to cancel instead. Each recording can be up to two minutes.
-
-### Close the window. Keep dictating.
-
-Close the window to keep Terry in the menu bar. Open it again from the microphone icon. Quit stops it completely. Installation instructions are below this video. After setup and the model download, dictation works offline.
+The final card links to the repository and labels installation as a Mac source install.

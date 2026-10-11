@@ -8,9 +8,9 @@ No account. No subscription. Dictation works offline after the first setup and m
 
 ## Watch it work
 
-[![Watch the 85-second Terry Tibbs tutorial: narration and captions](https://amopqrboxtncgxjaqitq.supabase.co/storage/v1/object/public/marketing/tutorials/terrytibbs/0.6.4/terry-tibbs-tutorial.jpg)](https://amopqrboxtncgxjaqitq.supabase.co/storage/v1/object/public/marketing/tutorials/terrytibbs/0.6.4/terry-tibbs-tutorial.mp4)
+[![Watch the 19-second Terry Tibbs tutorial: narration and captions](https://amopqrboxtncgxjaqitq.supabase.co/storage/v1/object/public/marketing/tutorials/terrytibbs/0.6.4/terry-tibbs-short.jpg?v=2)](https://amopqrboxtncgxjaqitq.supabase.co/storage/v1/object/public/marketing/tutorials/terrytibbs/0.6.4/terry-tibbs-short.mp4?v=2)
 
-**[▶ Watch the 85-second tutorial](https://amopqrboxtncgxjaqitq.supabase.co/storage/v1/object/public/marketing/tutorials/terrytibbs/0.6.4/terry-tibbs-tutorial.mp4)** · [Prefer reading? Quick tutorial + transcript](docs/TUTORIAL.md)
+**[▶ Watch the 19-second tutorial](https://amopqrboxtncgxjaqitq.supabase.co/storage/v1/object/public/marketing/tutorials/terrytibbs/0.6.4/terry-tibbs-short.mp4?v=2)** · [Prefer reading? Quick tutorial + transcript](docs/TUTORIAL.md)
 
 ## Use it in three steps
 
