@@ -1,51 +1,43 @@
 # Terry Tibbs
 
-**Talk. Release. Your words appear.** Offline dictation for your Mac.
+**Speak instead of typing.** Free, local dictation for your Mac.
 
-```text
-Microphone menu                      Close window: keep Terry running
-  Open Terry Tibbs                   Quit Terry Tibbs: stop Terry
-  Settings
-  Quit Terry Tibbs
+Hold a key. Say your words. Let go. Terry copies the text and tries to paste it into the text box where you started. It never presses Send.
 
-Hold shortcut → Listening → Release → Transcribing → Paste sent
-Double-tap    → Locked    → Press   → Transcribing → Paste sent
-                       Escape → Cancel
-                       No eligible text field → Copied only
-```
+No account. No subscription. Dictation works offline after the first setup and model download.
 
-Terry lives behind the microphone icon in your menu bar. Hold your chosen key, speak, then release it. Double-tap to talk hands-free and press again to finish. Every successful transcription goes to your clipboard. Terry also attempts to paste into the text field in the app where you started, while that app is still focused. It never presses Send.
+## Watch it work
 
-An offline Silero detector checks for speech before Whisper runs. Silent or non-speech attempts leave your previous transcript and clipboard alone. Speech recognition runs on your Mac with Whisper. No account, subscription or cloud speech service is required. Installation downloads dependencies and a model once. Dictation can then run offline.
+[![Watch the 85-second Terry Tibbs tutorial: narration and captions](https://amopqrboxtncgxjaqitq.supabase.co/storage/v1/object/public/marketing/tutorials/terrytibbs/0.6.4/terry-tibbs-tutorial.jpg)](https://amopqrboxtncgxjaqitq.supabase.co/storage/v1/object/public/marketing/tutorials/terrytibbs/0.6.4/terry-tibbs-tutorial.mp4)
 
-**Status: 0.6.4, early source release.** Apple Silicon packaging is implemented and tested on an M2 Max. The source is public at [DilrajAhdan/terrytibbs](https://github.com/DilrajAhdan/terrytibbs). A signed, notarised installer is not available yet. MacBook Neo is a documented trial target, not a tested device. The project is not affiliated with Wispr Flow or any television character.
+**[▶ Watch the 85-second tutorial](https://amopqrboxtncgxjaqitq.supabase.co/storage/v1/object/public/marketing/tutorials/terrytibbs/0.6.4/terry-tibbs-tutorial.mp4)** · [Prefer reading? Quick tutorial + transcript](docs/TUTORIAL.md)
 
-## Start here
+## Use it in three steps
 
-| I want to… | Read this |
+0. **First time?** [Install Terry](#install), allow **Microphone** and **Accessibility**, then open **Settings → Record shortcut**. Choose a key, click **Use shortcut**, then **Save settings**.
+1. **Click a text box.** An email, a note or a chat message.
+2. **Hold your shortcut and speak** when Terry shows it is listening.
+3. **Let go.** Wait for transcription. Your words go to the clipboard and Terry attempts to paste them into the original app.
+
+| Want to… | Do this |
 |---|---|
-| Install on my Mac, including MacBook Neo | [Installation](docs/INSTALL.md) |
-| Pick the right model for my hardware | [Models and hardware](docs/MODELS-AND-HARDWARE.md) |
-| Set my shortcut, microphone and sounds | [Everyday use](docs/USER-GUIDE.md) |
-| See graphs and understand the measurements | [Benchmarks](docs/BENCHMARKS.md) |
-| Understand what stays on my Mac | [Privacy and security](SECURITY.md) |
-| Help improve the project | [Contributing](CONTRIBUTING.md) |
+| Talk without holding a key | **Double-tap** your shortcut. Look for the lock. |
+| Finish a locked recording | **Press once more.** |
+| Cancel | Press **Escape**. |
+| Get Terry out of the way | **Close to menu bar**. It keeps running. |
+| Open it again | Click the **microphone icon** in the Mac menu bar. |
+| Stop Terry completely | Menu bar → **Quit Terry Tibbs**. |
 
-## Which Mac and model?
+**Says “Copied only”?** Click your text box and press **⌘V**. Your text is on the clipboard. For automatic paste, enable Accessibility and keep the original app focused. Password fields and some apps cannot accept automatic paste.
 
-- **MacBook Neo, 8 GB:** trial `small.en` for English, with optional cleanup off. Test speed and memory pressure on the actual machine before choosing it for daily use.
-- **M-series Mac, 16 GB or more:** start with `large-v3-turbo`, the default download.
-- **Powerful Mac with spare memory:** compare full `large-v3` against Turbo using your own speech. A larger model is a candidate to test, not a guarantee of fewer mistakes.
-- **Intel, Windows and Linux:** the current Terry app and setup are not supported, even though whisper.cpp itself supports more platforms.
+**Check it:** try two short sentences in **TextEdit**. Both should appear. Then double-tap, speak, and press once to finish. Check the lock appears and the third sentence reaches the document.
 
-These are starting recommendations, not results from a hardware comparison. The [hardware guide](docs/MODELS-AND-HARDWARE.md) explains 8 GB Macs, multilingual use and model switching.
+## Install
 
-![Whisper model download sizes: tiny.en 0.08 GB, base.en 0.15 GB, small.en 0.49 GB, medium.en 1.53 GB, Turbo 1.62 GB and large-v3 3.10 GB.](docs/images/model-downloads.png)
+**Early source release: 0.6.4.** There is no signed, ready-to-download installer yet.
 
-## One-command source installation
-
-0. Use an ARM64 Mac with macOS 15+, Xcode Command Line Tools, Homebrew and Node.js 22.12+. Clone this repository, or download and extract its source ZIP, then open Terminal in that folder. Allow 10 GB free space, plus space for developer tools. A first install needs internet.
-1. Run:
+0. You need an **ARM64 Mac, macOS 15+, Homebrew, Xcode Command Line Tools and Node.js 22.12+**. Allow around **10 GB free disk space**, plus developer tools. Internet is needed for setup. [Exact prerequisite commands →](docs/INSTALL.md)
+1. In **Terminal**, paste:
 
    ```sh
    git clone https://github.com/DilrajAhdan/terrytibbs.git
@@ -53,40 +45,44 @@ These are starting recommendations, not results from a hardware comparison. The 
    npm run install:mac
    ```
 
-   This installs pinned project dependencies, the Homebrew speech engine if missing, the verified Turbo model and the app in **~/Applications**, then opens it. It refuses to overwrite an existing app. This is one command **after prerequisites and source download**, not a zero-prerequisite installer. The default model is a 1.62 GB download; 8 GB Macs should use the [smaller-model route](docs/INSTALL.md#macbook-neo-use-a-smaller-model-first).
-2. Allow Microphone and Accessibility, choose a shortcut, then test in TextEdit. Closing the window keeps the microphone menu icon running; Quit stops it. Login launch is not automatic.
+2. Terry installs into **~/Applications** and opens. Grant permissions and choose your shortcut. Check the microphone icon appears in the menu bar.
 
-A DMG build is available with `npm run dist`. Current DMGs are **unsigned and require the separate speech engine/model**. They are local preview installers, not a finished public installation experience. See [release readiness and the proposed Homebrew route](docs/RELEASE.md).
+The install command downloads the **1.62 GB Whisper Turbo model**. It refuses to overwrite an existing app. **On an 8 GB Mac, use the [smaller-model installation](docs/INSTALL.md#macbook-neo-use-a-smaller-model-first) instead.** This is one install command after prerequisites and cloning, not a zero-setup installer.
 
-## What is included
+**Want a DMG?** Developers can build one with `npm run dist`. It is currently unsigned and still needs the separate speech engine and model. [Installer limitations →](docs/RELEASE.md)
 
-Terry has a configurable hold shortcut, double-tap lock, a 104 × 28 pixel recording indicator, microphone selection and input test, vocabulary hints, local transcription, clipboard output, focus-checked paste, cancellation, retry and WAV import. Dictation is limited to two minutes per recording.
+## Make it work better for you
 
-**Quick buzz** is a short nonverbal cue that does not delay capture. **Keep microphone ready** is optional: it keeps up to 120 ms of idle audio in memory, discards unused samples and pauses on lock or sleep. It is off by default. Voice clips and Mac chime deliberately delay capture until they finish and settle. See [sounds and readiness](docs/USER-GUIDE.md#sounds-and-first-words).
+- **Wrong microphone?** Settings → choose your microphone → **Test input** → Save settings.
+- **Names come out wrong?** Add names and specialist words to **Vocabulary**. These are hints, not guaranteed spellings.
+- **Missing the beginning?** Use activation sound **Off** or **Quick buzz**. Voice clips deliberately delay recording. Optional **Keep microphone ready** can reduce startup delay.
+- **Music in the background?** Enable background audio muting. The muting transition is not instantaneous.
+- **Long thought?** Each dictation can last up to **two minutes**.
 
-Background audio muting silences other apps during dictation and restores their output afterwards. The transition can take time, so immediate microphone capture and complete muting do not happen at the same instant. Optional local Ollama cleanup is off by default; ordinary dictation needs no separate language model.
+[Full everyday guide →](docs/USER-GUIDE.md)
 
-## How it works
+## Which model? Which Mac?
 
-```mermaid
-flowchart LR
-    Key[Shortcut or Start button] --> Mic[Selected microphone]
-    Mic --> Audio[Audio retained on this Mac]
-    Audio --> Whisper[whisper.cpp + Whisper model]
-    Whisper --> Text[Transcript]
-    Text --> Choice{Cleanup enabled?}
-    Choice -->|Yes| Optional[Local Ollama cleanup]
-    Optional --> Clipboard[Clipboard]
-    Choice -->|No| Clipboard
-    Clipboard --> Guard{Original app and eligible field?}
-    Guard -->|Yes| Paste[Send paste]
-    Guard -->|No| Copy[Keep text available to copy]
-```
+| Your Mac | Starting point |
+|---|---|
+| M-series, **16 GB or more** | **Whisper large-v3-turbo**, the default |
+| **8 GB**, including MacBook Neo | Trial **small.en** for English, cleanup off |
+| Plenty of spare memory | Compare full **large-v3** with Turbo on your own speech |
 
-The latest recording and transcript are held in app memory for retry and copying. CLI fallback creates a temporary WAV and removes it on normal completion, failure or cancellation. The clipboard retains completed text independently. Read [the full privacy boundaries](SECURITY.md).
+These are starting recommendations. M2 Max has been tested; MacBook Neo has not. A bigger model does not guarantee better results. Intel, Windows and Linux are outside the current app's supported setup.
 
-## Evidence and open source
+[Model graphs and hardware details →](docs/MODELS-AND-HARDWARE.md) · [Measured benchmarks →](docs/BENCHMARKS.md)
 
-The [benchmark guide](docs/BENCHMARKS.md) separates measured timings from hardware suggestions. The [release readiness report](docs/RELEASE.md) records recording, shortcut and paste checks with their limitations. There is no published accuracy benchmark of the maintainer's everyday speech or the MacBook Neo yet.
+## Where does my speech go?
 
-The source is [MIT licensed](LICENSE). Models and dependencies retain their own licences. No celebrity recordings or imagery are bundled; local clips supplied by a user remain outside the source licence. See [third-party notices](THIRD_PARTY_NOTICES.md). Release signing, a bundled speech runtime and a fresh-machine installation check are still release work.
+**Speech → local speech detector → local Whisper model → clipboard → paste.**
+
+No cloud speech service is used. Optional text cleanup uses local Ollama and is off by default. Terry keeps the latest recording and transcript in memory for retry and copying. A temporary WAV may be created by the CLI fallback and is removed on completion, failure or cancellation. Clipboard text remains until replaced.
+
+[Privacy and security →](SECURITY.md)
+
+## Help build it
+
+[Developer setup and contributing](CONTRIBUTING.md) · [Release readiness](docs/RELEASE.md) · [Report an issue](https://github.com/DilrajAhdan/terrytibbs/issues)
+
+[MIT licensed](LICENSE). Models and dependencies retain their own licences. No celebrity audio or imagery is bundled. Terry is not affiliated with Wispr Flow or any television character. [Third-party notices →](THIRD_PARTY_NOTICES.md)

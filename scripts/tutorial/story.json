@@ -1,0 +1,8 @@
+[
+ {"id":"intro","title":"Speak. Terry types.","text":"Terry Tibbs turns your speech into text on your Mac. Hold a shortcut, speak, then release. It copies your words and tries to paste them into the text box where you started. No send button is pressed."},
+ {"id":"settings","title":"1. Choose your shortcut","text":"First, open Settings. Record a shortcut, or choose Globe and Function. Pick your microphone and use Test input to check it. Save your settings. Allow Microphone and Accessibility when macOS asks."},
+ {"id":"hold","title":"2. Hold. Speak. Release.","text":"Click the text box you want to write in. Hold your shortcut and speak when Terry is listening. Release to finish. This demonstration feeds a prerecorded sentence through the real local speech engine."},
+ {"id":"result","title":"3. Your words are ready","text":"Here is the actual result. If Terry says Copied only, your words are still safe on the clipboard. Click the text box and press Command V. Check Accessibility and keep the original app focused for automatic paste."},
+ {"id":"lock","title":"Hands free: double-tap to lock","text":"For longer thoughts, double-tap your shortcut. Locked means you can let go and keep talking. Press once more to finish. Press Escape to cancel instead. Each recording can be up to two minutes."},
+ {"id":"finish","title":"Close the window. Keep dictating.","text":"Close the window to keep Terry in the menu bar. Open it again from the microphone icon. Quit stops it completely. Installation instructions are below this video. After setup and the model download, dictation works offline."}
+]

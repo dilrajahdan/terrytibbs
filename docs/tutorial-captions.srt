@@ -1,0 +1,83 @@
+1
+00:00:00,000 --> 00:00:03,146
+Terry Tibbs turns your speech into text on your Mac. Hold
+
+2
+00:00:03,146 --> 00:00:06,293
+a shortcut, speak, then release. It copies your words and tries
+
+3
+00:00:06,293 --> 00:00:09,439
+to paste them into the text box where you started. No
+
+4
+00:00:09,439 --> 00:00:12,585
+send button is pressed.
+
+5
+00:00:13,585 --> 00:00:18,059
+First, open Settings. Record a shortcut, or choose Globe and Function.
+
+6
+00:00:18,059 --> 00:00:22,533
+Pick your microphone and use Test input to check it. Save
+
+7
+00:00:22,533 --> 00:00:27,006
+your settings. Allow Microphone and Accessibility when macOS asks.
+
+8
+00:00:28,006 --> 00:00:31,907
+Click the text box you want to write in. Hold your
+
+9
+00:00:31,907 --> 00:00:35,808
+shortcut and speak when Terry is listening. Release to finish. This
+
+10
+00:00:35,808 --> 00:00:39,709
+demonstration feeds a prerecorded sentence through the real local speech engine.
+
+11
+00:00:40,709 --> 00:00:44,169
+Here is the actual result. If Terry says Copied only, your
+
+12
+00:00:44,169 --> 00:00:47,629
+words are still safe on the clipboard. Click the text box
+
+13
+00:00:47,629 --> 00:00:51,089
+and press Command V. Check Accessibility and keep the original app
+
+14
+00:00:51,089 --> 00:00:54,548
+focused for automatic paste.
+
+15
+00:00:55,548 --> 00:00:59,821
+For longer thoughts, double-tap your shortcut. Locked means you can let
+
+16
+00:00:59,821 --> 00:01:04,093
+go and keep talking. Press once more to finish. Press Escape
+
+17
+00:01:04,093 --> 00:01:08,366
+to cancel instead. Each recording can be up to two minutes.
+
+18
+00:01:09,366 --> 00:01:13,034
+Close the window to keep Terry in the menu bar. Open
+
+19
+00:01:13,034 --> 00:01:16,703
+it again from the microphone icon. Quit stops it completely. Installation
+
+20
+00:01:16,703 --> 00:01:20,372
+instructions are below this video. After setup and the model download,
+
+21
+00:01:20,372 --> 00:01:24,041
+dictation works offline.
