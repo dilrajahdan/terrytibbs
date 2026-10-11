@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="720pt" height="403.2pt" viewBox="0 0 720 403.2" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <title>Whisper GGML download sizes, in decimal GB. Turbo is 1.62 GB; full large-v3 is 3.10 GB.</title>
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>Whisper GGML download sizes, in decimal GB. Turbo is 1.62 GB; full large-v3 is 3.10 GB.</dc:title>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.7, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 403.2 
+L 720 403.2 
+L 720 0 
+L 0 0 
+z
+" style="fill: #f6f4ed"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 172.8 306.432 
+L 648 306.432 
+L 648 100.8 
+L 172.8 100.8 
+z
+" style="fill: #f6f4ed"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <path d="M 172.8 306.432 
+L 172.8 100.8 
+" clip-path="url(#p50e32fa471)" style="fill: none; stroke: #dedfd6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_2">
+      <defs>
+       <path id="ma76075f38e" d="M 0 0 
+L 0 3.5 
+" style="stroke: #5b6056; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#ma76075f38e" x="172.8" y="306.432" style="fill: #5b6056; stroke: #5b6056; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5b6056" x="172.8" y="322.550125" transform="rotate(-0 172.8 322.550125)">0.0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_3">
+      <path d="M 238.8 306.432 
+L 238.8 100.8 
+" clip-path="url(#p50e32fa471)" style="fill: none; stroke: #dedfd6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#ma76075f38e" x="238.8" y="306.432" style="fill: #5b6056; stroke: #5b6056; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5b6056" x="238.8" y="322.550125" transform="rotate(-0 238.8 322.550125)">0.5</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_5">
+      <path d="M 304.8 306.432 
+L 304.8 100.8 
+" clip-path="url(#p50e32fa471)" style="fill: none; stroke: #dedfd6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#ma76075f38e" x="304.8" y="306.432" style="fill: #5b6056; stroke: #5b6056; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5b6056" x="304.8" y="322.550125" transform="rotate(-0 304.8 322.550125)">1.0</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_7">
+      <path d="M 370.8 306.432 
+L 370.8 100.8 
+" clip-path="url(#p50e32fa471)" style="fill: none; stroke: #dedfd6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_8">
+      <g>
+       <use xlink:href="#ma76075f38e" x="370.8" y="306.432" style="fill: #5b6056; stroke: #5b6056; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5b6056" x="370.8" y="322.550125" transform="rotate(-0 370.8 322.550125)">1.5</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_9">
+      <path d="M 436.8 306.432 
+L 436.8 100.8 
+" clip-path="url(#p50e32fa471)" style="fill: none; stroke: #dedfd6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_10">
+      <g>
+       <use xlink:href="#ma76075f38e" x="436.8" y="306.432" style="fill: #5b6056; stroke: #5b6056; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5b6056" x="436.8" y="322.550125" transform="rotate(-0 436.8 322.550125)">2.0</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_11">
+      <path d="M 502.8 306.432 
+L 502.8 100.8 
+" clip-path="url(#p50e32fa471)" style="fill: none; stroke: #dedfd6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_12">
+      <g>
+       <use xlink:href="#ma76075f38e" x="502.8" y="306.432" style="fill: #5b6056; stroke: #5b6056; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5b6056" x="502.8" y="322.550125" transform="rotate(-0 502.8 322.550125)">2.5</text>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_13">
+      <path d="M 568.8 306.432 
+L 568.8 100.8 
+" clip-path="url(#p50e32fa471)" style="fill: none; stroke: #dedfd6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_14">
+      <g>
+       <use xlink:href="#ma76075f38e" x="568.8" y="306.432" style="fill: #5b6056; stroke: #5b6056; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5b6056" x="568.8" y="322.550125" transform="rotate(-0 568.8 322.550125)">3.0</text>
+     </g>
+    </g>
+    <g id="xtick_8">
+     <g id="line2d_15">
+      <path d="M 634.8 306.432 
+L 634.8 100.8 
+" clip-path="url(#p50e32fa471)" style="fill: none; stroke: #dedfd6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_16">
+      <g>
+       <use xlink:href="#ma76075f38e" x="634.8" y="306.432" style="fill: #5b6056; stroke: #5b6056; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5b6056" x="634.8" y="322.550125" transform="rotate(-0 634.8 322.550125)">3.5</text>
+     </g>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #171816" x="410.4" y="344.163875" transform="rotate(-0 410.4 344.163875)">Download size (decimal GB)</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_17"/>
+     <g id="text_10">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #171816" x="160.8" y="124.421397" transform="rotate(-0 160.8 124.421397)">tiny.en</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_18"/>
+     <g id="text_11">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #171816" x="160.8" y="157.922863" transform="rotate(-0 160.8 157.922863)">base.en</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_19"/>
+     <g id="text_12">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #171816" x="160.8" y="191.424329" transform="rotate(-0 160.8 191.424329)">small.en</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_20"/>
+     <g id="text_13">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #171816" x="160.8" y="224.925796" transform="rotate(-0 160.8 224.925796)">medium.en</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_21"/>
+     <g id="text_14">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #171816" x="160.8" y="258.427262" transform="rotate(-0 160.8 258.427262)">large-v3-turbo</text>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_22"/>
+     <g id="text_15">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #171816" x="160.8" y="291.928728" transform="rotate(-0 160.8 291.928728)">large-v3</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 172.8 110.146909 
+L 183.057022 110.146909 
+L 183.057022 129.57776 
+L 172.8 129.57776 
+z
+" clip-path="url(#p50e32fa471)" style="fill: #267386"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 172.8 143.648375 
+L 192.331276 143.648375 
+L 192.331276 163.079226 
+L 172.8 163.079226 
+z
+" clip-path="url(#p50e32fa471)" style="fill: #267386"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 172.8 177.149842 
+L 237.165075 177.149842 
+L 237.165075 196.580692 
+L 172.8 196.580692 
+z
+" clip-path="url(#p50e32fa471)" style="fill: #267386"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 172.8 210.651308 
+L 375.258271 210.651308 
+L 375.258271 230.082158 
+L 172.8 230.082158 
+z
+" clip-path="url(#p50e32fa471)" style="fill: #267386"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 172.8 244.152774 
+L 387.241296 244.152774 
+L 387.241296 263.583625 
+L 172.8 263.583625 
+z
+" clip-path="url(#p50e32fa471)" style="fill: #bf9600"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 172.8 277.65424 
+L 581.34442 277.65424 
+L 581.34442 297.085091 
+L 172.8 297.085091 
+z
+" clip-path="url(#p50e32fa471)" style="fill: #267386"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 172.8 306.432 
+L 648 306.432 
+" style="fill: none; stroke: #c4c6bc; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #171816" x="189.657022" y="122.897647" transform="rotate(-0 189.657022 122.897647)">0.08 GB</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #171816" x="198.931276" y="156.399113" transform="rotate(-0 198.931276 156.399113)">0.15 GB</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #171816" x="243.765075" y="189.900579" transform="rotate(-0 243.765075 189.900579)">0.49 GB</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #171816" x="381.858271" y="223.402046" transform="rotate(-0 381.858271 223.402046)">1.53 GB</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #171816" x="393.841296" y="256.903512" transform="rotate(-0 393.841296 256.903512)">1.62 GB</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #171816" x="587.94442" y="290.404978" transform="rotate(-0 587.94442 290.404978)">3.10 GB</text>
+   </g>
+  </g>
+  <g id="text_22">
+   <text style="font-weight: 700; font-size: 22px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #171816" x="32.4" y="28.224" transform="rotate(-0 32.4 28.224)">How much do the models download?</text>
+  </g>
+  <g id="text_23">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans'; fill: #5b6056" transform="translate(32.4 66.822281)">Standard Whisper GGML files. Smaller bars mean less download space.</text>
+   <text style="font-size: 11px; font-family: 'DejaVu Sans'; fill: #5b6056" transform="translate(32.4 81.647359)">This is not an accuracy or total-memory chart.</text>
+  </g>
+  <g id="text_24">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #5b6056" transform="translate(32.4 361.434969)">Source: pinned ggerganov/whisper.cpp files · Checked 10 October 2026</text>
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #5b6056" transform="translate(32.4 374.912312)">Exact bytes and source revision: docs/data/models.json</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p50e32fa471">
+   <rect x="172.8" y="100.8" width="475.2" height="205.632"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-10-10T01:01:25.603Z",
+  "chip": "Apple M2 Max",
+  "memoryBytes": 103079215104,
+  "macOS": "15.5",
+  "enginePackage": "whisper.cpp 1.9.4",
+  "model": "ggml-large-v3-turbo.bin",
+  "modelSha256": "1fc70f774d38eb169993ac391eea357ef47c88757ef72ee5943879b7e8e2bc69",
+  "sample": "whisper.cpp public JFK sample",
+  "sampleSha256": "59dfb9a4acb36fe2a2affc14bacbee2920ff435cb13cc314a08c13f66ba7860e",
+  "sampleDurationMs": 11000,
+  "cliMs": [
+    2892,
+    1773,
+    1672
+  ],
+  "serverStartupMs": 956,
+  "warmMs": [
+    488,
+    429,
+    510,
+    452,
+    556
+  ],
+  "referenceWordsMatch": true,
+  "conditions": "Normal desktop workload; model read for SHA-256 before timing, so OS file cache is warm. CLI runs precede server runs. Server startup is excluded from request timings. English, empty vocabulary, cleanup off. No physical microphone or paste timing. One sample, no accuracy generalisation."
+}

@@ -1,0 +1,84 @@
+{
+  "name": "terrytibbs",
+  "version": "0.6.4",
+  "description": "Local voice dictation for macOS. Talk, tidy, paste.",
+  "main": "out/main/index.js",
+  "author": "Terry Tibbs contributors",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "npm run build:helper && electron-vite dev",
+    "build": "npm run typecheck && npm run build:helper && electron-vite build",
+    "build:helper": "node scripts/build-helper.mjs",
+    "start": "electron-vite preview",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "npm run build && node scripts/e2e-fixtures.mjs && playwright test",
+    "setup": "tsx scripts/setup.mjs",
+    "package": "npm run build && electron-builder --mac --dir",
+    "dist": "npm run build && electron-builder --mac dmg --publish never",
+    "install:mac": "node scripts/install-mac.mjs",
+    "export:public": "node scripts/export-source.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "^22.19.0",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "electron": "44.7.0",
+    "electron-builder": "26.15.3",
+    "electron-vite": "5.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.3.0",
+    "vue": "^3.5.0",
+    "vue-tsc": "^3.2.0"
+  },
+  "build": {
+    "appId": "dev.terrytibbs.desktop",
+    "productName": "Terry Tibbs",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "build/terry-native",
+        "to": "terry-native"
+      },
+      {
+        "from": "build/terry-audio",
+        "to": "terry-audio"
+      },
+      {
+        "from": "resources/ggml-silero-v6.2.0.bin",
+        "to": "ggml-silero-v6.2.0.bin"
+      },
+      {
+        "from": "resources/SILERO-LICENSE.txt",
+        "to": "SILERO-LICENSE.txt"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "identity": null,
+      "hardenedRuntime": false,
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "Terry Tibbs uses your microphone for offline dictation and optional microphone readiness. Audio stays on your Mac.",
+        "LSUIElement": true
+      },
+      "icon": "resources/icon.icns",
+      "minimumSystemVersion": "15.0.0"
+    }
+  }
+}

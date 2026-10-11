@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-10-10",
+  "units": "Download bytes converted to decimal GB (1 GB = 1,000,000,000 bytes). Standard unquantized GGML files; not total runtime memory.",
+  "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+  "source": "https://huggingface.co/ggerganov/whisper.cpp/tree/5359861c739e955e79d9a303bcbc70fb988958b1",
+  "apiSource": "https://huggingface.co/api/models/ggerganov/whisper.cpp/tree/5359861c739e955e79d9a303bcbc70fb988958b1?recursive=false&expand=false",
+  "models": [
+    {"name": "tiny.en", "bytes": 77704715},
+    {"name": "base.en", "bytes": 147964211},
+    {"name": "small.en", "bytes": 487614201},
+    {"name": "medium.en", "bytes": 1533774781},
+    {"name": "large-v3-turbo", "bytes": 1624555275},
+    {"name": "large-v3", "bytes": 3095033483}
+  ]
+}

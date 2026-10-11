@@ -1,0 +1,14 @@
+node_modules/
+out/
+release/
+build/terry-native
+build/terry-audio
+*.bin
+*.wav
+*.aiff
+*.log
+.env*
+.DS_Store
+artifacts/
+test-results/
+playwright-report/
