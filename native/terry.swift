@@ -332,7 +332,7 @@ if action == "request-accessibility" {
     let focus = pid > 0 ? focusEditability(pid: pid) : .unavailable
     emit(["trusted": AXIsProcessTrusted(), "pid": pid, "name": app?.localizedName ?? "",
           "bundleId": app?.bundleIdentifier ?? "", "editable": focus == .editable, "focus": focus.rawValue])
-} else if action == "paste", CommandLine.arguments.count == 3,
+} else if (action == "paste" || action == "paste-preserving"), CommandLine.arguments.count == 3,
           let pid = Int32(CommandLine.arguments[2]) {
     guard AXIsProcessTrusted() else { emit(["ok": false, "reason": "accessibility"]); exit(2) }
     guard NSWorkspace.shared.frontmostApplication?.processIdentifier == pid else {
@@ -378,6 +378,45 @@ if action == "request-accessibility" {
           let releaseCommand = CGEvent(keyboardEventSource: source, virtualKey: 55, keyDown: false) else {
         emit(["ok": false, "reason": "event_failed"]); exit(5)
     }
+    // Keep arbitrary formats and multiple items, not just their plain-text representation.
+    // Resolve lazy data before replacing the board; never serialise it to disk or stdout.
+    let board = NSPasteboard.general
+    var savedItems: [NSPasteboardItem] = []
+    var ownedChange: Int? = nil
+    if action == "paste-preserving" {
+        guard let text = String(data: FileHandle.standardInput.readDataToEndOfFile(), encoding: .utf8), !text.isEmpty else {
+            emit(["ok": false, "reason": "invalid_text"]); exit(1)
+        }
+        let originalChange = board.changeCount
+        for item in board.pasteboardItems ?? [] {
+            let copy = NSPasteboardItem()
+            for type in item.types {
+                guard let data = item.data(forType: type), copy.setData(data, forType: type) else {
+                    emit(["ok": false, "reason": "clipboard_unavailable"]); exit(7)
+                }
+            }
+            savedItems.append(copy)
+        }
+        guard board.changeCount == originalChange else {
+            emit(["ok": false, "reason": "clipboard_changed"]); exit(7)
+        }
+        // Resolving large or lazy clipboard formats can take time. Recheck focus
+        // and real modifier state after that work, before touching the board.
+        guard NSWorkspace.shared.frontmostApplication?.processIdentifier == pid,
+              focusEditability(pid: pid, prepare: false) == .editable else {
+            emit(["ok": false, "reason": "focus_changed"]); exit(3)
+        }
+        guard physicalModifierFlags().intersection(modifiers).isEmpty else {
+            emit(["ok": false, "reason": "modifiers_held"]); exit(6)
+        }
+        board.clearContents()
+        guard board.setString(text, forType: .string) else {
+            board.clearContents()
+            if !savedItems.isEmpty { board.writeObjects(savedItems) }
+            emit(["ok": false, "reason": "clipboard_unavailable"]); exit(7)
+        }
+        ownedChange = board.changeCount
+    }
     // Balance our synthetic Command flag so subsequent dictations start cleanly.
     pressCommand.type = .flagsChanged
     pressCommand.flags = .maskCommand
@@ -394,8 +433,18 @@ if action == "request-accessibility" {
     up.post(tap: .cghidEventTap)
     releaseCommand.flags = []
     releaseCommand.post(tap: .cghidEventTap)
-    usleep(30_000)
-    emit(["ok": true])
+    // Sending Cmd+V is asynchronous. Give the destination time to consume it.
+    // A later user/app copy always wins, even if it copied identical text.
+    var restored = false
+    var superseded = false
+    if let ownedChange = ownedChange {
+        usleep(600_000)
+        if board.changeCount == ownedChange {
+            board.clearContents()
+            restored = savedItems.isEmpty || board.writeObjects(savedItems)
+        } else { superseded = true }
+    } else { usleep(30_000) }
+    emit(["ok": true, "clipboardRestored": restored, "clipboardSuperseded": superseded])
 } else if action == "watch-hotkey", CommandLine.arguments.count == 3,
           let shortcut = parseShortcut(CommandLine.arguments[2]) {
     signal(SIGPIPE, SIG_IGN)

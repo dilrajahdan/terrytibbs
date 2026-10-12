@@ -12,15 +12,17 @@ test('paste retries current focus instead of permanently rejecting a stale initi
   const helper = join(dir, 'helper')
   const calls = join(dir, 'calls')
   const response = join(dir, 'response')
-  writeFileSync(helper, `#!/bin/sh\nprintf '%s\\n' "$1 $2" >> '${calls}'\ncat '${response}'\n`)
+  const input = join(dir, 'input')
+  writeFileSync(helper, `#!/bin/sh\nprintf '%s\\n' "$1 $2" >> '${calls}'\ncat > '${input}'\ncat '${response}'\n`)
   chmodSync(helper, 0o700)
   const target: FrontApp = { pid: 999, name: 'Rich editor', bundleId: 'dev.example.editor', trusted: true, editable: false }
   try {
-    writeFileSync(response, '{"ok":true}')
+    writeFileSync(response, '{"ok":true,"clipboardRestored":true}')
     const result = await pasteTranscript(helper, 'hello', target)
     assert.equal(result.status, 'sent')
-    assert.match(result.message, /Paste sent/)
-    assert.equal(readFileSync(calls, 'utf8'), 'paste 999\n')
+    assert.match(result.message, /Previous clipboard restored/)
+    assert.equal(readFileSync(calls, 'utf8'), 'paste-preserving 999\n')
+    assert.equal(readFileSync(input, 'utf8'), 'hello')
     rmSync(calls)
     for (const reason of ['focus_changed', 'non_editable', 'secure_field', 'accessibility', 'modifiers_held', 'event_failed']) {
       writeFileSync(response, JSON.stringify({ ok: false, reason }))
@@ -47,5 +49,21 @@ test('native failures and malformed responses never report paste success', async
       writeFileSync(helper, '#!/bin/sh\n' + script + '\n'); chmodSync(helper, 0o700)
       assert.equal((await pasteTranscript(helper, 'hello', target)).status, 'clipboard')
     }
+  } finally { rmSync(dir, { recursive: true, force: true }) }
+})
+
+test('cancelling delivery waits for the helper to finish clipboard restoration', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'terry-paste-cancel-'))
+  const helper = join(dir, 'helper')
+  const started = join(dir, 'started'), finished = join(dir, 'finished')
+  writeFileSync(helper, `#!${process.execPath}\nconst fs=require('node:fs');process.stdin.resume();process.stdin.on('end',()=>{fs.writeFileSync(${JSON.stringify(started)},'');setTimeout(()=>{fs.writeFileSync(${JSON.stringify(finished)},'');process.stdout.write('{"ok":true,"clipboardRestored":true}');},150)});\n`)
+  chmodSync(helper, 0o700)
+  try {
+    const controller = new AbortController()
+    const timer = setInterval(() => { if (existsSync(started)) controller.abort() }, 10)
+    try {
+      await assert.rejects(pasteTranscript(helper, 'Private text sent through stdin', { pid: 999, name: 'Editor', bundleId: 'dev.example.editor', trusted: true, editable: true }, controller.signal), /abort/i)
+      assert.equal(existsSync(finished), true)
+    } finally { clearInterval(timer) }
   } finally { rmSync(dir, { recursive: true, force: true }) }
 })

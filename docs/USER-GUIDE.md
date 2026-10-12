@@ -27,6 +27,14 @@ The on-screen **Start dictation** button starts a locked recording. It is useful
 
 A silent attempt shows **No speech** and leaves the clipboard and previous transcript unchanged. Terry checks for speech before using your vocabulary prompt. The detector classifies the recording without cutting its beginning or end. It can still mistake speech from a nearby person or television for yours.
 
+## Your clipboard stays yours
+
+Automatic paste temporarily borrows the clipboard. About 0.6 seconds after sending paste, Terry restores the previous clipboard, including rich text, images and copied-file references. It snapshots immediately before delivery, so anything you copy while transcription is running is preserved. If you copy something new during the brief paste window, that newer copy wins.
+
+The transcript remains in Terry. Use **Copy transcript** when you explicitly want it on the clipboard. **Copied only**, import, retry and disabling automatic paste still leave the transcription on the clipboard for manual pasting. Those explicit copy/fallback paths do not restore the old clipboard.
+
+Paste events cannot prove that every app consumed the text. Very slow or unusual editors may need **Copy transcript** and a manual paste.
+
 ## Choose your key
 
 0. Open **Terry menu → Settings → How you dictate**.

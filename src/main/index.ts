@@ -273,7 +273,6 @@ async function processAudio(wav: Buffer, id: number, paste: boolean) {
     if (id !== activeId) return
     const transcript = { ...rawTranscript, text: cleaned.text, processingMs: Math.round(performance.now() - start) }
     controller.signal.throwIfAborted()
-    await clipboard.writeText(cleaned.text)
     if (id !== activeId) return
     let message = cleaned.warning ? `${cleaned.warning} Copied to clipboard.` : 'Copied to clipboard. Paste wherever you like.'
     let delivery: 'sent' | 'clipboard' = 'clipboard'
@@ -285,6 +284,7 @@ async function processAudio(wav: Buffer, id: number, paste: boolean) {
       delivery = result.status
       message = cleaned.warning ? `${cleaned.warning} ${result.message}` : result.message
     }
+    if (delivery === 'clipboard') clipboard.writeText(cleaned.text)
     operation = null
     gesture.reset()
     releaseEscape()

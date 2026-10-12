@@ -31,7 +31,7 @@ if (command === 'frontmost') {
     log({ type: 'frontmost-end', index, pid })
     process.stdout.write(JSON.stringify({ trusted: true, pid, name: 'Fake editor', bundleId: 'dev.fake.editor', editable: true, focus: 'editable' }) + '\\n')
   }, delay)
-} else if (command === 'paste') {
+} else if (command === 'paste-preserving') {
   const pid = Number(process.argv[3])
   log({ type: 'paste', pid })
   process.stdout.write('{"ok":true}\\n')
@@ -132,7 +132,7 @@ test('capture starts before delayed focus lookup and cancelled sessions cannot r
     expect(await captureStops()).toHaveLength(1)
     const completed = await state()
     expect(completed.transcript?.text).toMatch(/country/i)
-    expect(await app.evaluate(async ({ clipboard }) => await clipboard.readText())).toMatch(/country/i)
+    // The mocked helper validates routing only; native clipboard restoration has its own integration check.
     expect(completed.delivery).toBe('sent')
     expect(completed.transcript?.deliveryMessage).toMatch(/Paste sent/i)
     expect((await helperEvents(logPath)).filter(event => event.type === 'paste').map(event => event.pid)).toEqual([222])

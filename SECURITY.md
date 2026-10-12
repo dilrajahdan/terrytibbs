@@ -48,8 +48,7 @@ in memory. The CLI fallback writes a temporary
 WAV inside a private directory and removes it on normal completion, failure or
 cancellation. An OS crash or force kill can leave temporary files in the macOS
 temporary directory; this is not forensic secure deletion. Every completed dictation puts the transcript on the system clipboard, where
-other software and clipboard managers may read it. The latest transcript deliberately
-remains there after automatic paste. Clearing app memory does not clear the clipboard.
+other software and clipboard managers may read it. Automatic paste snapshots all available clipboard items/types in helper memory, temporarily writes the transcript, and restores the snapshot after a 600 ms paste grace period if the pasteboard change counter still matches Terry’s write. A newer copy wins. Snapshots are not logged or written to disk. Clipboard-only fallback and explicit Copy leave the transcript on the clipboard. A force kill during delivery can prevent restoration. Clearing app memory does not clear the clipboard.
 Automatic paste checks for an editable, non-secure focused field in the original
 foreground app. Unknown accessibility roles fall back to clipboard-only output.
 

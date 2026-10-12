@@ -69,3 +69,9 @@ Source publication and a polished consumer release are separate milestones. The 
 - Exported source passed TypeScript checking using already installed dependencies. Main test run: 94 passed, one environment-dependent skip; app/Swift build passed. The installer prerequisite check passed on the development Mac. Fresh-machine installation is still unverified.
 - `npm audit` reported eight moderate findings, no high or critical findings, in the development/build dependency tree. These still require upgrade/review before a public binary release; this report does not imply a comprehensive security audit.
 - Final source ZIP: 100 files, no broken local Markdown links. Packaged disk image: 263 regular files scanned for known personal terms. Four substring hits in upstream Electron locale packs were manually checked as ordinary translated words; no maintainer details were found in those hits or Terry's own app/helper content. App and Applications shortcut were present; minimum OS metadata is 15.0.0. This is a scoped privacy review, not a universal absence-of-secrets guarantee.
+
+## 0.6.5 clipboard preservation
+
+Automatic native paste now restores the previous pasteboard after a 600 ms consumption grace period, guarded by the macOS change counter. Native integration checks cover large rich text, custom data, multiple items including an existing file URL, PNG data, empty content, repeated paste and a newer copy (including identical text). Clipboard-only fallback and explicit Copy retain their existing behaviour.
+
+Full speech capture plus hold delivery and clipboard restoration was observed. The combined locked-recording/native-paste check could not complete while the foreground switched to another app; native clipboard preservation and gesture routing were tested separately. The user's physical shortcut sequence remains a manual boundary.

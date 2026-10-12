@@ -27,7 +27,7 @@ function copiedOnly(reason: string): PasteResult {
   return { status: 'clipboard', reason, message: `Copied only. ${explanation[reason] || explanation.unavailable}` }
 }
 
-export async function pasteTranscript(helper: string, _text: string, target: FrontApp | null, signal?: AbortSignal): Promise<PasteResult> {
+export async function pasteTranscript(helper: string, text: string, target: FrontApp | null, signal?: AbortSignal): Promise<PasteResult> {
   signal?.throwIfAborted()
   if (!target || target.pid === process.pid || target.bundleId.startsWith('dev.terrytibbs')) return copiedOnly('no_target')
   if (target.focus === 'secure') return copiedOnly('secure_field')
@@ -35,7 +35,15 @@ export async function pasteTranscript(helper: string, _text: string, target: Fro
   // reject that stale snapshot: the helper rechecks the actual focus before posting.
   let stdout = ''
   try {
-    stdout = (await execute(helper, ['paste', String(target.pid)], { timeout: 3000, signal })).stdout
+    // Once the helper owns the clipboard, let it finish restoration even if the
+    // recording is cancelled. Speech stays on stdin, never in process arguments.
+    stdout = await new Promise<string>((resolve, reject) => {
+      const child = execFile(helper, [text ? 'paste-preserving' : 'paste', String(target.pid)], { timeout: 5000 }, (error, output) => {
+        if (error) { Object.assign(error, { stdout: output }); reject(error) } else resolve(output)
+      })
+      child.stdin?.on('error', () => { /* Early native validation can close stdin. */ })
+      child.stdin?.end(text)
+    })
   } catch (error) {
     signal?.throwIfAborted()
     stdout = typeof (error as { stdout?: unknown }).stdout === 'string' ? (error as { stdout: string }).stdout : ''
@@ -43,7 +51,7 @@ export async function pasteTranscript(helper: string, _text: string, target: Fro
   signal?.throwIfAborted()
   try {
     const result = JSON.parse(stdout)
-    if (result.ok === true) return { status: 'sent', message: `Paste sent to ${target.name}. Transcript is also on the clipboard.` }
+    if (result.ok === true) return { status: 'sent', message: `Paste sent to ${target.name}. ${result.clipboardRestored ? 'Previous clipboard restored.' : result.clipboardSuperseded ? 'Newer clipboard content kept.' : text ? 'Previous clipboard could not be restored.' : 'Transcript is also on the clipboard.'}` }
     return copiedOnly(typeof result.reason === 'string' ? result.reason : 'unavailable')
   } catch { return copiedOnly('unavailable') }
 }

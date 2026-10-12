@@ -1,5 +1,6 @@
 // Real app capture, isolated profile. No personal microphone or settings are read.
 // Requires a built app, TERRY_DEMO_MODEL and artifacts/tutorial/sample.mp3.
+import { execFileSync } from 'node:child_process'
 import { _electron as electron, expect } from '@playwright/test';
 import {mkdtemp,writeFile,readFile,mkdir,symlink,rm} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
@@ -28,17 +29,17 @@ try{
  await click('Settings');await page.getByLabel('Global shortcut',{exact:true}).evaluate(el=>el.closest('section').scrollIntoView());await shot('choose');
  await click('Record shortcut');await page.keyboard.press('Control+Shift+KeyD');await click('Use shortcut');await click('Save settings');await page.waitForTimeout(700);await click('Dictation');
  const edge=type=>app.evaluate((_e,type)=>globalThis.__terryHotkey({type}),type);
- const focusNote=async()=>{await editor.evaluate(({app,BrowserWindow})=>{app.focus({steal:true});BrowserWindow.getAllWindows()[0].show();BrowserWindow.getAllWindows()[0].focus()});await note.getByRole('textbox',{name:'Note'}).click();};
- await focusNote();activePage=note;await shot('dictate');await edge('down');
- await expect.poll(()=>page.evaluate(()=>window.terry.getState().then(s=>s.phase))).toBe('recording');await page.waitForTimeout(6500);await edge('up');
+ const focusNote=async()=>{await editor.evaluate(({app,BrowserWindow})=>{app.focus({steal:true});BrowserWindow.getAllWindows()[0].show();BrowserWindow.getAllWindows()[0].focus()});await note.getByRole('textbox',{name:'Note'}).click();await note.waitForTimeout(300);};
+ await focusNote();activePage=note;await shot('dictate');expect(JSON.parse(String(execFileSync('build/terry-native',['frontmost']))).pid).toBe(editor.process().pid);await edge('down');
+ await expect.poll(()=>page.evaluate(()=>window.terry.getState().then(s=>s.phase))).toBe('recording');await page.waitForTimeout(6500);await focusNote();await edge('up');
  await expect.poll(()=>page.evaluate(()=>window.terry.getState().then(s=>s.phase)),{timeout:60000}).toBe('ready');
  const state=await page.evaluate(()=>window.terry.getState());console.log({delivery:state.delivery,message:state.message});
- await expect(note.getByRole('textbox',{name:'Note'})).toHaveValue(state.transcript.text);expect(state.delivery).toBe('sent');await page.waitForTimeout(1200);
+ await expect(note.getByRole('textbox',{name:'Note'})).toHaveValue(state.transcript.text);expect(state.delivery).toBe('sent');expect(await app.evaluate(({clipboard})=>clipboard.readText())).toBe(originalClipboard);await page.waitForTimeout(1200);
  await note.getByRole('textbox',{name:'Note'}).press('Meta+A');await note.getByRole('textbox',{name:'Note'}).press('Backspace');await shot('handsfree');await app.evaluate(()=>{for(const type of ['down','up','down','up'])globalThis.__terryHotkey({type});});
  await expect.poll(()=>page.evaluate(()=>window.terry.getState().then(s=>s.recordingMode))).toBe('locked');
- const hud=app.windows().find(p=>p.url().endsWith('#hud'));await expect(hud.locator('.hud-lock')).toBeVisible();await hud.screenshot({path:join(root,'hud-lock.png')});
- await page.waitForTimeout(6500);await edge('down');await edge('up');await expect.poll(()=>page.evaluate(()=>window.terry.getState().then(s=>s.phase)),{timeout:60000}).toBe('ready');
- await expect(note.getByRole('textbox',{name:'Note'})).toHaveValue(state.transcript.text);await page.waitForTimeout(1200);await shot('install');
+ const hud=app.windows().find(p=>p.url().endsWith('#hud'));await expect(hud.locator('.hud-lock')).toBeVisible();if(recording)await hud.screenshot({path:join(root,'hud-lock.png')});await focusNote();
+ await page.waitForTimeout(6500);await focusNote();await edge('down');await edge('up');await expect.poll(()=>page.evaluate(()=>window.terry.getState().then(s=>s.phase)),{timeout:60000}).toBe('ready');
+ const locked=await page.evaluate(()=>window.terry.getState());console.log({lockedDelivery:locked.delivery,message:locked.message});await expect(note.getByRole('textbox',{name:'Note'})).toHaveValue(state.transcript.text);await page.waitForTimeout(1200);expect(await app.evaluate(({clipboard})=>clipboard.readText())).toBe(originalClipboard);await shot('install');
  await writeFile(join(root,'capture-evidence.json'),JSON.stringify({recording,transcript:state.transcript.text,delivery:state.delivery,marks,method:'Real app, prerecorded speech through software microphone, test-only shortcut boundary, clipboard verified. Native auto-paste verified into the separate owned editor process. No physical keyboard claim.'},null,2));
  console.log('Capture verified:',state.transcript.text);
 }finally{capturing=false;if(captureWork)await captureWork;await writeFile(join(root,'frames.json'),JSON.stringify(frames));await app.evaluate(({clipboard},text)=>clipboard.writeText(text),originalClipboard);await editor.close();await app.close();await rm(editorDir,{recursive:true,force:true});await rm(dir,{recursive:true,force:true});}

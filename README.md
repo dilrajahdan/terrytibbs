@@ -2,7 +2,7 @@
 
 **Speak instead of typing.** Free, local dictation for your Mac.
 
-Hold a key. Say your words. Let go. Terry copies the text and tries to paste it into the text box where you started. It never presses Send.
+Hold a key. Say your words. Let go. Terry pastes the text into the text box where you started, then restores your previous clipboard. It never presses Send.
 
 No account. No subscription. Dictation works offline after the first setup and model download.
 
@@ -17,7 +17,7 @@ No account. No subscription. Dictation works offline after the first setup and m
 0. **First time?** [Install Terry](#install), allow **Microphone** and **Accessibility**, then open **Settings → Record shortcut**. Choose a key, click **Use shortcut**, then **Save settings**.
 1. **Click a text box.** An email, a note or a chat message.
 2. **Hold your shortcut and speak** when Terry shows it is listening.
-3. **Let go.** Wait for transcription. Your words go to the clipboard and Terry attempts to paste them into the original app.
+3. **Let go.** Wait for transcription. Terry attempts to paste your words into the original app, then restores your previous clipboard.
 
 | Want to… | Do this |
 |---|---|
@@ -34,7 +34,7 @@ No account. No subscription. Dictation works offline after the first setup and m
 
 ## Install
 
-**Early source release: 0.6.4.** There is no signed, ready-to-download installer yet.
+**Early source release: 0.6.5.** There is no signed, ready-to-download installer yet.
 
 0. You need an **ARM64 Mac, macOS 15+, Homebrew, Xcode Command Line Tools and Node.js 22.12+**. Allow around **10 GB free disk space**, plus developer tools. Internet is needed for setup. [Exact prerequisite commands →](docs/INSTALL.md)
 1. In **Terminal**, paste:
