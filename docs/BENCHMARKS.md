@@ -74,3 +74,25 @@ The Neo guide's `small.en` download/checksum command was also exercised in an is
 | Battery impact | Not measured | Not measured |
 
 This table should grow as real evidence arrives. Blank or untested results are not zeros.
+
+## Quiet speech experiment, 12 October 2026
+
+We tested a cheap amplitude boost against the unchanged Turbo recogniser. The independent public JFK recording was used as a clean control, at 5% volume, and at 5% volume with a 1,200 Hz low-pass filter. These are artificial degradations, **not recordings of someone mumbling**.
+
+| Input | Current median | With boost | Word errors, both versions |
+|---|---:|---:|---:|
+| Clean | 400 ms | 405 ms | 0 of 22 |
+| Quiet | 400 ms | 404 ms | 0 of 22 |
+| Quiet and muffled | 399 ms | 400 ms | 0 of 22 |
+
+Three runs per input/version on the development Apple M2 Max. The clean control matched the reference before the comparison began. Model: large-v3-turbo; English, no vocabulary, cleanup off. Warm recognition requests only; includes amplitude adjustment time but excludes model startup, microphone capture, speech detection and paste. Normal desktop load, not a controlled hardware benchmark. Small timing differences do not establish a performance effect.
+
+**Decision: do not change production audio.** This sample showed no accuracy benefit from boosting. It cannot establish real mumbling accuracy or justify claims of improved recognition. User-specific errors need representative speech and corrected reference text before comparing microphone processing or decoding changes.
+
+[Raw results](data/quiet-speech-2026-10-12.json). To reproduce after developer setup and fixture download:
+
+```sh
+npx tsx scripts/benchmark-quiet-speech.ts /absolute/path/to/ggml-large-v3-turbo.bin
+```
+
+Requires `ffmpeg` on PATH. The script does not open a microphone, touch the clipboard or change settings. It generates only derivatives of the verified public fixture. The experimental boost is capped at 8×, targets RMS 0.06 and caps peaks at 0.85. It is not enabled in Terry.

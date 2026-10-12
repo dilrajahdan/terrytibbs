@@ -1,0 +1,151 @@
+{
+  "model": "ggml-large-v3-turbo.bin",
+  "referenceWords": 22,
+  "rows": [
+    {
+      "sample": "clean",
+      "variant": "baseline",
+      "round": 0,
+      "ms": 399,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "clean",
+      "variant": "boost",
+      "round": 0,
+      "ms": 417,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "quiet",
+      "variant": "baseline",
+      "round": 0,
+      "ms": 400,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "quiet",
+      "variant": "boost",
+      "round": 0,
+      "ms": 408,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "muffled",
+      "variant": "baseline",
+      "round": 0,
+      "ms": 399,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "muffled",
+      "variant": "boost",
+      "round": 0,
+      "ms": 400,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "clean",
+      "variant": "boost",
+      "round": 1,
+      "ms": 405,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "clean",
+      "variant": "baseline",
+      "round": 1,
+      "ms": 400,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "quiet",
+      "variant": "boost",
+      "round": 1,
+      "ms": 400,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "quiet",
+      "variant": "baseline",
+      "round": 1,
+      "ms": 399,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "muffled",
+      "variant": "boost",
+      "round": 1,
+      "ms": 400,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "muffled",
+      "variant": "baseline",
+      "round": 1,
+      "ms": 399,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "clean",
+      "variant": "baseline",
+      "round": 2,
+      "ms": 400,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "clean",
+      "variant": "boost",
+      "round": 2,
+      "ms": 404,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "quiet",
+      "variant": "baseline",
+      "round": 2,
+      "ms": 404,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "quiet",
+      "variant": "boost",
+      "round": 2,
+      "ms": 404,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "muffled",
+      "variant": "baseline",
+      "round": 2,
+      "ms": 412,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    },
+    {
+      "sample": "muffled",
+      "variant": "boost",
+      "round": 2,
+      "ms": 404,
+      "wordErrors": 0,
+      "transcript": "And so, my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+    }
+  ],
+  "limitations": "One public 11-second recording with artificial attenuation/low-pass filtering, not real mumbling. Warm recognition requests, English, no vocabulary, cleanup off. Includes boost time but excludes model startup, microphone capture, VAD and paste. Normal desktop load; no personal audio."
+}
