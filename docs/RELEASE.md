@@ -13,7 +13,7 @@ CLI: Homebrew cask → open
            microphone icon → hold to talk
 ```
 
-The best ordinary-user route is a signed, notarised DMG containing the app and speech runtime. A Homebrew cask can install that same app with one command once a real repository, hosted releases and cask exist. The [public source repository](https://github.com/DilrajAhdan/terrytibbs) is available. There is no live cask or public binary download yet. Do not advertise an invented `brew install` command.
+The best ordinary-user route is a signed, notarised DMG containing the app and speech runtime. A Homebrew cask can install that same app with one command once a real repository, hosted releases and cask exist. The [public source repository](https://github.com/DilrajAhdan/terrytibbs) is available. An [unsigned ARM64 preview DMG is available for 0.6.5](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.5), with checksums and [installation instructions](INSTALL.md#dmg-preview-installation). There is no live Homebrew cask. Do not advertise an invented `brew install` command.
 
 The current `npm run install:mac` is a developer shortcut from an extracted source folder. It requires Homebrew, Node.js and Apple developer tools first. It installs dependencies, verifies the Turbo model, builds and copies Terry to `~/Applications`, and opens it. It does not bypass macOS consent, log in for the user or overwrite an existing app.
 
@@ -67,7 +67,7 @@ Source publication and a polished consumer release are separate milestones. The 
 - ARM64 preview DMG built and its disk-image checksum verified. It remains unsigned; no clean-machine Gatekeeper or zero-dependency install success is claimed.
 - Public source export excludes Git history and private/internal documents. Known maintainer names, account terms and author email addresses were supplied to the export scanner; no matches remained in the exported files. Local home-path and selected credential-pattern checks passed. The export omits resource forks, extended attributes and quarantine metadata.
 - Exported source passed TypeScript checking using already installed dependencies. Main test run: 94 passed, one environment-dependent skip; app/Swift build passed. The installer prerequisite check passed on the development Mac. Fresh-machine installation is still unverified.
-- `npm audit` reported eight moderate findings, no high or critical findings, in the development/build dependency tree. These still require upgrade/review before a public binary release; this report does not imply a comprehensive security audit.
+- `npm audit` reported eight moderate findings, no high or critical findings, in the development/build dependency tree. Reviewed for the 0.6.5 preview: all eight trace to the build-tool dependency `sprintf-js` and [GHSA-hp3w-g68c-fv3c](https://github.com/advisories/GHSA-hp3w-g68c-fv3c), which reports no patched version. The affected formatting code is not included in the packaged app archive. `npm audit --omit=dev` reports zero findings. The preview retains the locked build tooling; this is not a comprehensive security audit.
 - Final source ZIP: 100 files, no broken local Markdown links. Packaged disk image: 263 regular files scanned for known personal terms. Four substring hits in upstream Electron locale packs were manually checked as ordinary translated words; no maintainer details were found in those hits or Terry's own app/helper content. App and Applications shortcut were present; minimum OS metadata is 15.0.0. This is a scoped privacy review, not a universal absence-of-secrets guarantee.
 
 ## 0.6.5 clipboard preservation
@@ -75,3 +75,11 @@ Source publication and a polished consumer release are separate milestones. The 
 Automatic native paste now restores the previous pasteboard after a 600 ms consumption grace period, guarded by the macOS change counter. Native integration checks cover large rich text, custom data, multiple items including an existing file URL, PNG data, empty content, repeated paste and a newer copy (including identical text). Clipboard-only fallback and explicit Copy retain their existing behaviour.
 
 Full speech capture plus hold delivery and clipboard restoration was observed. The combined locked-recording/native-paste check could not complete while the foreground switched to another app; native clipboard preservation and gesture routing were tested separately. The user's physical shortcut sequence remains a manual boundary.
+
+## 0.6.5 downloadable preview evidence, 12 October 2026
+
+- Clean `npm ci`, type checking, native compilation and ARM64 DMG build completed.
+- Unit suite: 95 passed, one skipped, zero failed.
+- Mounted DMG contains Terry Tibbs 0.6.5 and the Applications shortcut. Its native clipboard helper matches the locally installed, exercised 0.6.5 helper.
+- Packaged app archive contains compiled application files and package metadata, with no settings, recordings, development dependencies or personal-path matches. The model detector and its licence are bundled separately.
+- SHA-256 checksums accompany the preview. The DMG is unsigned and unnotarised; a fresh-Mac installation remains unverified.

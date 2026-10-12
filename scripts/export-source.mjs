@@ -4,7 +4,7 @@ import { mkdirSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, dirname, resolve } from 'node:path'
 const publicDocs = new Set(['INSTALL.md','MODELS-AND-HARDWARE.md','BENCHMARKS.md','USER-GUIDE.md','RELEASE.md','WHISPER-SERVER-NOTES.md'])
-const topLevel = new Set(['.gitignore','CONTRIBUTING.md','LICENSE','README.md','SECURITY.md','THIRD_PARTY_NOTICES.md','package.json','package-lock.json','tsconfig.json','electron.vite.config.ts','playwright.config.ts'])
+const topLevel = new Set(['.gitignore','CONTRIBUTING.md','LICENSE','CHANGELOG.md','README.md','SECURITY.md','THIRD_PARTY_NOTICES.md','package.json','package-lock.json','tsconfig.json','electron.vite.config.ts','playwright.config.ts'])
 const files = execFileSync('git', ['ls-tree','-r','--name-only','HEAD'], {encoding:'utf8'}).trim().split('\n').filter(file =>
  topLevel.has(file) || /^(src|native|tests|scripts|resources)\//.test(file) || file.startsWith('.github/workflows/') || file === 'build/entitlements.mac.plist' ||
  file.startsWith('docs/data/') || file.startsWith('docs/images/') || (file.startsWith('docs/') && publicDocs.has(file.slice(5))))

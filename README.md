@@ -34,7 +34,11 @@ No account. No subscription. Dictation works offline after the first setup and m
 
 ## Install
 
-**Early source release: 0.6.5.** There is no signed, ready-to-download installer yet.
+**[Download the 0.6.5 Mac preview](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.5)** · [Changelog](CHANGELOG.md)
+
+The DMG saves you building the app. It is unsigned and unnotarised, and needs Homebrew whisper.cpp plus a model. **[DMG installation steps →](docs/INSTALL.md#dmg-preview-installation)**
+
+Prefer building from source?
 
 0. You need an **ARM64 Mac, macOS 15+, Homebrew, Xcode Command Line Tools and Node.js 22.12+**. Allow around **10 GB free disk space**, plus developer tools. Internet is needed for setup. [Exact prerequisite commands →](docs/INSTALL.md)
 1. In **Terminal**, paste:
@@ -49,7 +53,7 @@ No account. No subscription. Dictation works offline after the first setup and m
 
 The install command downloads the **1.62 GB Whisper Turbo model**. It refuses to overwrite an existing app. **On an 8 GB Mac, use the [smaller-model installation](docs/INSTALL.md#macbook-neo-use-a-smaller-model-first) instead.** This is one install command after prerequisites and cloning, not a zero-setup installer.
 
-**Want a DMG?** Developers can build one with `npm run dist`. It is currently unsigned and still needs the separate speech engine and model. [Installer limitations →](docs/RELEASE.md)
+**Building a DMG yourself?** Run `npm ci` then `npm run dist`. [Installer limitations →](docs/RELEASE.md)
 
 ## Make it work better for you
 
