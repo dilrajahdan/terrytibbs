@@ -58,20 +58,20 @@ function armedProcessor(sampleRate = 16_000) {
   }
 }
 
-test('armed worklet keeps only the last 120 ms in memory and emits no idle audio or levels', () => {
+test('armed worklet keeps only the last 500 ms in memory and emits no idle audio or levels', () => {
   for (const rate of [16_000, 48_000]) {
     const subject = armedProcessor(rate)
     subject.command({ type: 'arm', preRollMs: 999_999 })
     const idle = Float32Array.from({ length: rate * 3 }, (_, index) => index / rate)
     subject.feed(idle)
-    assert.equal(subject.processor.preRoll.length, Math.floor(rate * 0.12))
-    assert.equal(subject.processor.preRollCount, Math.floor(rate * 0.12))
+    assert.equal(subject.processor.preRoll.length, Math.floor(rate * 0.5))
+    assert.equal(subject.processor.preRollCount, Math.floor(rate * 0.5))
     assert.deepEqual([...subject.delivered], [{ type: 'prepared' }])
     subject.command({ type: 'begin', captureId: 30, includePreRoll: true })
     const begin = subject.delivered.at(-1)
     assert.equal(begin.type, 'audio')
     assert.equal(begin.captureId, 30)
-    assert.deepEqual(Array.from(begin.samples), Array.from(idle.slice(-Math.floor(rate * 0.12))))
+    assert.deepEqual(Array.from(begin.samples), Array.from(idle.slice(-Math.floor(rate * 0.5))))
     assert.equal(subject.processor.preRoll.every((sample: number) => sample === 0), true, 'Promoted idle audio must be erased from its ring')
     subject.feed(new Float32Array([0.7, 0.8]))
     subject.command({ type: 'flush', captureId: 30, requestId: 1 })
@@ -82,12 +82,12 @@ test('armed worklet keeps only the last 120 ms in memory and emits no idle audio
 
 test('cue mode discards pre-roll and cancel reset cannot carry old partial samples into a new session', () => {
   const subject = armedProcessor()
-  subject.command({ type: 'arm', preRollMs: 120 })
+  subject.command({ type: 'arm', preRollMs: 500 })
   subject.feed(new Float32Array(2048).fill(0.9))
   subject.command({ type: 'begin', captureId: 31, includePreRoll: false })
   assert.deepEqual([...subject.delivered], [{ type: 'prepared' }])
   subject.feed(new Float32Array([0.7, 0.8]))
-  subject.command({ type: 'arm', preRollMs: 120 })
+  subject.command({ type: 'arm', preRollMs: 500 })
   subject.feed(new Float32Array([0.1, 0.2]))
   subject.command({ type: 'begin', captureId: 32, includePreRoll: true })
   subject.command({ type: 'flush', captureId: 31, requestId: 2 })
@@ -109,4 +109,16 @@ test('first live audio is delivered after 16 ms at 16 kHz and partial stop tail 
   subject.feed(new Float32Array([0.3]))
   subject.command({ type: 'flush', captureId: 33, requestId: 4 })
   assert.deepEqual(Array.from(subject.delivered.at(-2).samples), [Math.fround(0.3)])
+})
+
+
+test('opening speech survives a 350 ms delay between shortcut and begin delivery', () => {
+  const subject = armedProcessor()
+  subject.command({ type: 'arm', preRollMs: 500 })
+  subject.feed(new Float32Array(16_000))
+  const opening = Float32Array.from({ length: 5600 }, (_, i) => Math.sin(i / 19) / 4)
+  subject.feed(opening)
+  subject.command({ type: 'begin', captureId: 40, includePreRoll: true })
+  const retained = subject.delivered.filter(m => m.type === 'audio').flatMap(m => Array.from(m.samples))
+  assert.deepEqual(retained.slice(-opening.length), Array.from(opening), 'The complete opening must survive delayed main/renderer delivery')
 })

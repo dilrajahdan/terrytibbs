@@ -194,7 +194,6 @@ async function startRecording() {
     // Each recording owns its promise; cancelled snapshots cannot replace it.
     destinationWork = e2e && !process.env.TERRY_E2E_NATIVE_HELPER ? Promise.resolve(null) : frontmost(helper, controller.signal).catch(() => null)
     globalShortcut.register('Escape', cancel)
-    showHud()
     const fastStart = state.settings.activationSound === 'buzz' || state.settings.activationSound === 'off'
     stopAfterStartId = -1
     if (!e2e && process.platform === 'darwin') {
@@ -211,7 +210,10 @@ async function startRecording() {
       capture({ action: 'start', sessionId: id, microphoneId: state.settings.microphoneId, includePreRoll: fastStart })
       captureTimer = setTimeout(() => fail(new Error('The microphone did not start. Check its permission and try again.'), id), 15_000)
     }
+    // Retain audio before showing the overlay. Window work must
+    // never sit in front of the fast capture command.
     if (fastStart) beginCapture()
+    showHud()
     await audioRestoreWork
     if (id !== activeId || controller.signal.aborted || !['starting', 'recording'].includes(state.phase)) return
     let guard: AudioLease | null = null

@@ -23,14 +23,14 @@ Choose the downloadable preview DMG or build from source. The preview is not sig
    ```
 
    Both commands should show help. If the detector command is missing, run `/opt/homebrew/bin/brew upgrade whisper.cpp`.
-2. Download **Terry-Tibbs-0.6.5-arm64.dmg** and **SHA256SUMS.txt** from the [0.6.5 release](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.5). With both files in **Downloads**, check:
+2. Download **Terry-Tibbs-0.6.6-arm64.dmg** and **SHA256SUMS.txt** from the [0.6.6 release](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.6). With both files in **Downloads**, check:
 
    ```sh
    cd "$HOME/Downloads"
    shasum -a 256 --check SHA256SUMS.txt
    ```
 
-   Expect **Terry-Tibbs-0.6.5-arm64.dmg: OK**. Open the DMG in Finder, drag **Terry Tibbs.app** onto **Applications**, eject the disk, then open **Applications → Terry Tibbs**. If upgrading, quit Terry first and replace the existing app in its current location (either Applications or your home Applications folder). Keep one installed copy. Your settings and models remain in Application Support.
+   Expect **Terry-Tibbs-0.6.6-arm64.dmg: OK**. Open the DMG in Finder, drag **Terry Tibbs.app** onto **Applications**, eject the disk, then open **Applications → Terry Tibbs**. If upgrading, quit Terry first and replace the existing app in its current location (either Applications or your home Applications folder). Keep one installed copy. Your settings and models remain in Application Support.
 3. This preview is unsigned and unnotarised. If macOS blocks it, after attempting to open it use **System Settings → Privacy & Security → Open Anyway** only if you trust this release. Confirm the app name. Never disable Gatekeeper globally. [Apple's instructions](https://support.apple.com/en-gb/102445).
 4. In Terry, use **Settings → Speech engine → Download recommended model** for the 1.62 GB Turbo model, then save. For an 8 GB Mac, use the `small.en` download block in [the smaller-model route](#macbook-neo-use-a-smaller-model-first), choose that model file in Settings, select English and save. No source packaging step is needed for the DMG route.
 5. Follow **First launch and permissions**, steps 6–9 below. Check microphone input, two hold/release pastes and one locked recording in **TextEdit**, in that order. Copy some text before dictating and check that **Command + V** still inserts that original text after Terry finishes automatic pasting. “Copied only” fallback and explicit **Copy** intentionally replace the clipboard.

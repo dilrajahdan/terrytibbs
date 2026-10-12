@@ -58,7 +58,7 @@ Paste events cannot prove that every app consumed the text. Very slow or unusual
 | **Off** | No activation sound. Capture starts opening at the trigger. |
 | **Quick buzz** | A generated 60 ms cue. Capture does not wait for playback. |
 | **Mac chime** or **Terry voice** | Playback finishes, followed by a 150 ms settling pause, before capture begins. Wait for the microphone bars. |
-| **Keep microphone ready** | Explicit opt-in to keep the selected mic active between dictations. At most 120 ms of rolling idle audio stays inside the worklet; unused audio is discarded. |
+| **Keep microphone ready** | Explicit opt-in to keep the selected mic active between dictations. At most 500 ms of rolling idle audio stays inside the worklet; unused audio is discarded. |
 
 With readiness off, macOS must open the microphone on each activation. The cue is not proof that the first audio frame has arrived. Readiness closes on disable, device change, lock, sleep and Quit, and prepares again after unlock when enabled. The system microphone indicator may remain visible while ready mode is enabled.
 

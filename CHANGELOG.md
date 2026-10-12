@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.6 · 12 October 2026
+
+- Quick buzz and silent activation send the capture command before opening the recording overlay.
+- With **Keep microphone ready** enabled, the memory-only rolling buffer now retains up to 500 ms rather than 120 ms. This protects opening syllables when the start command is delayed. It may include speech from just before the press.
+- Readiness remains opt-in. Turning it off, locking the Mac or quitting stops the idle microphone. Cold microphone startup and voice-clip playback still require waiting for listening readiness.
+
 ## 0.6.5 · 12 October 2026
 
 ### Keep what you copied

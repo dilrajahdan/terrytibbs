@@ -66,8 +66,8 @@ to public issues. If private reporting is unavailable, request a private channel
 without publishing exploit details or user data.
 
 Microphone readiness is explicit and opt-in. Its selected microphone remains open
-with echo cancellation enabled while Terry is ready. Only a fixed 120 ms rolling
+with echo cancellation enabled while Terry is ready. Only a fixed 500 ms rolling
 buffer exists inside the worklet; idle samples and levels never cross into the
-renderer or main process, and are never saved or transcribed. Session IDs prevent
+renderer or main process until dictation starts. Starting with Quick buzz or sound off includes that brief preceding audio in the recording; unused idle audio is discarded. Session IDs prevent
 stale frames from entering a subsequent recording. Disable, input change, screen
 lock, sleep and Quit close armed tracks, worklet ports and contexts.

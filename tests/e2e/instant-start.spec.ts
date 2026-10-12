@@ -22,6 +22,9 @@ readline.createInterface({input:process.stdin}).on('line',line=>{const c=JSON.pa
   await writeFile(join(directory,'settings.json'),JSON.stringify({...defaultSettings(directory),modelPath:resolve('artifacts/ggml-tiny.en.bin'),autoPaste:false,activationSound:'buzz',keepMicrophoneReady:false}))
   const app=await electron.launch({args:['.'],env:{...process.env,TERRY_E2E:'1',TERRY_USER_DATA:directory,TERRY_E2E_AUDIO_HELPER:helper}})
   try {
+    // This test verifies capture and recognition, not delivery. Keep the user's
+    // clipboard untouched; native paste has its own preservation harness.
+    await app.evaluate(({clipboard})=>{ clipboard.writeText=async()=>undefined })
     await expect.poll(()=>app.windows().filter(p=>p.url().includes('index.html')&&!p.url().endsWith('#hud')).length).toBe(1)
     const page=app.windows().find(p=>p.url().includes('index.html')&&!p.url().endsWith('#hud'))!
     const state=()=>page.evaluate(()=>window.terry.getState())
@@ -35,16 +38,19 @@ readline.createInterface({input:process.stdin}).on('line',line=>{const c=JSON.pa
       ;(window as any).__speak=(mixBuzz=false)=>{
         const source=producer.createBufferSource();source.buffer=audio;source.connect(destination)
         const startAt=producer.currentTime
+        const speech=audio.getChannelData(0)
         let speechOffset=0
-        if(mixBuzz){
+        {
           // Put the cue over actual opening speech, not the JFK fixture's quiet
           // introduction. Keep 30 ms before its first clearly voiced 10 ms frame.
-          const speech=audio.getChannelData(0), frameLength=Math.round(audio.sampleRate*.01)
+          const frameLength=Math.round(audio.sampleRate*.01)
           for(let frame=0;frame<audio.sampleRate;frame+=frameLength){
             let squares=0
             for(let i=frame;i<frame+frameLength;i++)squares+=speech[i]*speech[i]
             if(Math.sqrt(squares/frameLength)>.02){speechOffset=Math.max(0,frame/audio.sampleRate-.03);break}
           }
+        }
+        if(mixBuzz){
           // Exact native/audio-guard.swift activationBuzz waveform: 48 kHz,
           // 2,880 samples, 1,300 -> 800 Hz sweep and the same harmonic/envelope gain.
           const rate=48_000,count=2_880,buzz=producer.createBuffer(1,count,rate),samples=buzz.getChannelData(0)
@@ -138,6 +144,26 @@ readline.createInterface({input:process.stdin}).on('line',line=>{const c=JSON.pa
     expect(words(mixedTranscript!.text),'The overlapping cue must neither delete speech nor add words to the clean control transcript').toEqual(words(transcript!.text))
     await expect.poll(()=>state().then(s=>s.microphoneReady)).toBe(true)
     await writeFile('artifacts/instant-buzz-overlap.json',JSON.stringify({mixture,cleanWords:words(transcript!.text)?.length,mixedWords:words(mixedTranscript!.text)?.length},null,2))
+
+    // Start speech at key-down but hold the renderer's start command for 350 ms.
+    // This models a busy UI thread and exceeds the previous 120 ms buffer.
+    await app.evaluate(async({BrowserWindow})=>{
+      const window=BrowserWindow.getAllWindows().find(w=>!w.webContents.getURL().endsWith('#hud'))!
+      const send=window.webContents.send.bind(window.webContents)
+      window.webContents.send=((channel:string,...args:any[])=>{
+        if(channel==='terry:capture' && args[0]?.action==='start') setTimeout(()=>send(channel,...args),350)
+        else send(channel,...args)
+      }) as typeof window.webContents.send
+      await window.webContents.executeJavaScript('(window.__speak)()')
+      ;(globalThis as any).__terryHotkey({type:'down'})
+      window.webContents.send=send
+    })
+    await expect.poll(()=>state().then(s=>s.phase)).toBe('recording')
+    await new Promise(resolve=>setTimeout(resolve,11_600))
+    await app.evaluate(()=>(globalThis as any).__terryHotkey({type:'up'}))
+    await expect.poll(()=>state().then(s=>s.phase),{timeout:30_000}).toBe('ready')
+    expect((await state()).transcript!.text).toMatch(/^\s*and so[,\s]+my fellow Americans/i)
+    await writeFile('artifacts/onset-delay-check.json',JSON.stringify({deliveryDelayMs:350,openingPreserved:true,transcript:(await state()).transcript!.text},null,2))
 
     // A cancelled startup immediately followed by locked capture stays isolated.
     await app.evaluate(()=>(globalThis as any).__terryHotkey({type:'down'}))

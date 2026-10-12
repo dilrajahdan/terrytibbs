@@ -1,6 +1,6 @@
 const BLOCK_SIZE = 256
 const LEVEL_INTERVAL_FRAMES = 1600
-const MAX_PRE_ROLL_MS = 120
+const MAX_PRE_ROLL_MS = 500
 
 class TerryCaptureProcessor extends AudioWorkletProcessor {
   constructor() {

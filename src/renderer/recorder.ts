@@ -238,7 +238,7 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
       context.addEventListener('statechange', prepared.stateChanged)
       if (requestedSession !== null) beginCapture(prepared, requestedSession, pendingIncludePreRoll)
       else {
-        preparedProcessor.port.postMessage({ type: 'arm', preRollMs: 120 })
+        preparedProcessor.port.postMessage({ type: 'arm', preRollMs: 500 })
         prepared.preparedTimeout = setTimer(() => graphFailed(prepared, 'The ready microphone did not produce audio.'), FIRST_FRAME_TIMEOUT_MS)
       }
       source.connect(preparedProcessor)
@@ -497,7 +497,7 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
     if (retainReady && shouldKeepReady(graph)) {
       // arm resets the worklet's partial block and old recording identity before
       // any later begin; FIFO port messages make cancel/restart boundaries exact.
-      graph.processor.port.postMessage({ type: 'arm', preRollMs: 120 })
+      graph.processor.port.postMessage({ type: 'arm', preRollMs: 500 })
       if (graph.ready) reportPrepared(true, graph.inputDevice)
     } else closeGraph(graph)
   }

@@ -13,7 +13,7 @@ CLI: Homebrew cask → open
            microphone icon → hold to talk
 ```
 
-The best ordinary-user route is a signed, notarised DMG containing the app and speech runtime. A Homebrew cask can install that same app with one command once a real repository, hosted releases and cask exist. The [public source repository](https://github.com/DilrajAhdan/terrytibbs) is available. An [unsigned ARM64 preview DMG is available for 0.6.5](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.5), with checksums and [installation instructions](INSTALL.md#dmg-preview-installation). There is no live Homebrew cask. Do not advertise an invented `brew install` command.
+The best ordinary-user route is a signed, notarised DMG containing the app and speech runtime. A Homebrew cask can install that same app with one command once a real repository, hosted releases and cask exist. The [public source repository](https://github.com/DilrajAhdan/terrytibbs) is available. An [unsigned ARM64 preview DMG is available for 0.6.6](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.6), with checksums and [installation instructions](INSTALL.md#dmg-preview-installation). There is no live Homebrew cask. Do not advertise an invented `brew install` command.
 
 The current `npm run install:mac` is a developer shortcut from an extracted source folder. It requires Homebrew, Node.js and Apple developer tools first. It installs dependencies, verifies the Turbo model, builds and copies Terry to `~/Applications`, and opens it. It does not bypass macOS consent, log in for the user or overwrite an existing app.
 
@@ -83,3 +83,9 @@ Full speech capture plus hold delivery and clipboard restoration was observed. T
 - Mounted DMG contains Terry Tibbs 0.6.5 and the Applications shortcut. Its native clipboard helper matches the locally installed, exercised 0.6.5 helper.
 - Packaged app archive contains compiled application files and package metadata, with no settings, recordings, development dependencies or personal-path matches. The model detector and its licence are bundled separately.
 - SHA-256 checksums accompany the preview. The DMG is unsigned and unnotarised; a fresh-Mac installation remains unverified.
+
+## 0.6.6 opening-word capture evidence
+
+An opt-in ready microphone now retains at most 500 ms in its audio-thread ring. Quick buzz and silent activation send capture before overlay work. Cold-start device latency is not eliminated.
+
+The old buffer failed a sample-preservation regression with 350 ms of delayed delivery. The updated buffer passes. The real speech integration check trims the fixture to its opening speech, starts it at the trigger, checks the opening words with an overlapping buzz, then checks a deliberately delayed start command through the real Whisper recogniser. Unit suite: 96 passed, one skipped. This test uses a software microphone and tiny.en, not the user's physical microphone, hardware shortcut or Turbo model. Native paste behaviour is unchanged from 0.6.5.
