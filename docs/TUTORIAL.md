@@ -30,7 +30,7 @@
 
 ## Where did the window go?
 
-**Close to menu bar** hides the window and keeps Terry running. Click the microphone icon in the Mac menu bar to open Terry again. **Quit Terry Tibbs** stops it completely.
+**Close to menu bar** hides the window and keeps Terry running. Click the TT + microphone icon in the Mac menu bar to open Terry again. **Quit Terry Tibbs** stops it completely.
 
 ## About the recording
 

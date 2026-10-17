@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.8 · 18 October 2026
+
+- Replace the stock menu-bar microphone with an original **TT + microphone** mark, with separate 1× and Retina assets and native light/dark adaptation. Recording and locked indicators remain visible beside it.
+- Clarify that macOS's orange microphone indicator is separate from Terry's menu icon. With optional microphone readiness enabled, the input stays active while idle to preserve opening words. This update preserves that preference.
+
 ## 0.6.7 · 17 October 2026
 
 - **Microphone recovery:** opt-in readiness reconnects after an idle disconnect, mute or audio-context interruption. Retries are bounded; reconnecting a device and a visible retry action can restart preparation. Permission denial stops automatic attempts. Warm starts retain the existing capture path and half-second buffer.

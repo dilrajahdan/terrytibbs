@@ -42,6 +42,12 @@ Paste events cannot prove that every app consumed the text. Very slow or unusual
 2. For the Apple **Globe / Fn** key, use **Use Globe / Fn** directly, then save. This key may not reach the ordinary recorder. Function keys can also depend on the keyboard's Fn setting.
 3. Return to TextEdit and repeat hold/release and double-tap/press checks separately. A shortcut that conflicts with another app is a reason to choose another key.
 
+## Terry’s icon and the orange microphone indicator
+
+Terry uses a **TT + microphone** mark in the menu bar. The separate orange microphone indicator belongs to macOS and means an app is using an audio input.
+
+With **Settings → Microphone → Keep microphone ready** enabled, Terry keeps the input active while idle, including when its window is closed. Only the latest half-second is held in memory until you start dictation. This helps retain opening words. Turning the option off and choosing **Save settings** stops idle microphone use, but the device must reopen on each press. **Quit Terry Tibbs** stops Terry entirely. Another app can still keep the macOS indicator active.
+
 ## Choose and check your microphone
 
 0. Connect the microphone you intend to use.
