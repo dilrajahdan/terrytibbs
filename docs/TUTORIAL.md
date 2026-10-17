@@ -8,7 +8,7 @@
 
 0. [Install Terry](INSTALL.md). Allow Microphone and Accessibility in **System Settings → Privacy & Security**.
 1. Open **Terry → Settings → Record shortcut**. Press your chosen key and click **Use shortcut**. Or click **Use Globe / Fn**. Click **Save settings**.
-2. Choose your microphone. Click **Test input**, speak and check the input meter responds. Save settings.
+2. Choose your microphone at the top of **Settings**. The selection saves immediately. Click **Test input**, speak and check the input meter responds.
 3. Open **TextEdit → New Document** and click inside it.
 
 ## Your first sentence
