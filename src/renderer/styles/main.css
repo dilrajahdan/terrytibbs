@@ -82,7 +82,9 @@ kbd { display: inline-block; padding: 3px 8px; border: 1px solid var(--ink); bor
 .phase-message { position: relative; z-index: 1; margin: 7px 0 0; font-size: .84rem; text-align: center; }
 .dictation-input { min-height: 44px; margin: 16px 0 -10px; padding: 8px 11px; display: flex; align-items: flex-start; gap: 9px; border: 1px solid var(--line); border-radius: 5px; background: rgba(255,253,247,.66); }
 .dictation-input > span:first-child { color: #47724d; font-size: .66rem; line-height: 22px; }
-.dictation-input > span:last-child { min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 9px; }
+.dictation-input > span:nth-child(2) { min-width: 0; flex: 1; display: grid; gap: 5px; }
+.dictation-input { flex-wrap: wrap; }
+.dictation-input > button { font-size: .8rem; }
 .dictation-input strong { max-width: 100%; overflow-wrap: anywhere; font-size: .76rem; }
 .dictation-input small { color: var(--olive); font-size: .7rem; line-height: 1.4; }
 .dictation-input.warning { border-color: var(--red); }
@@ -144,6 +146,19 @@ details p { overflow-wrap: anywhere; font-size: .82rem; }
 .field small { color: var(--olive); }
 input, select, textarea { width: 100%; min-height: 46px; padding: 10px 12px; border: 1.5px solid var(--ink); border-radius: 4px; color: var(--ink); background: var(--white); }
 textarea { resize: vertical; min-height: 105px; }
+.correction-learner { margin: 18px 0; }
+.correction-editor, .correction-settings { display: grid; gap: 14px; min-width: 0; }
+.correction-editor p, .correction-settings p { margin: 0; font-size: .85rem; line-height: 1.5; }
+.correction-editor > label { font-weight: 750; }
+.correction-choice { min-height: 44px; display: flex; align-items: center; gap: 10px; overflow-wrap: anywhere; }
+.correction-choice input { width: 20px; min-height: 20px; flex: 0 0 20px; }
+.correction-choice span { min-width: 0; }
+.correction-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.correction-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); padding: 8px 0; }
+.correction-list li > span { min-width: 0; overflow-wrap: anywhere; }
+.correction-list button { flex-shrink: 0; }
+.correction-add { display: grid; gap: 12px; }
+.correction-editor button, .correction-add button { justify-self: start; max-width: 100%; }
 input[readonly] { color: #55574d; background: var(--paper); }
 .shortcut-recorder { min-width: 0; display: grid; gap: 10px; }
 .shortcut-current { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 9px 9px 12px; border: 1.5px solid var(--ink); border-radius: 4px; background: var(--white); }

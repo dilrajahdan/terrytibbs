@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.7 · 17 October 2026
+
+- **Microphone recovery:** opt-in readiness reconnects after an idle disconnect, mute or audio-context interruption. Retries are bounded; reconnecting a device and a visible retry action can restart preparation. Permission denial stops automatic attempts. Warm starts retain the existing capture path and half-second buffer.
+- **Know your input:** Microphone is the first Settings section, with a direct menu-bar entry and a Change microphone button. Selection saves immediately. The actual opened input is distinguished from a previous test result. A missing named microphone never silently falls back.
+- **Local correction learning:** edit the latest transcript, review the proposed word replacements and choose what to remember. Manage or pause saved corrections in Settings. Whole-word matching adds no model call; raw transcription is retained. Saving a correction does not repaste or change the clipboard.
+- **Model comparison:** reproducible, offline Parakeet TDT v3 versus Whisper Turbo benchmark tooling and results. This release keeps Whisper as the production engine; the comparison does not silently change anyone's model.
+- Recognition/UI tests now use an isolated in-memory clipboard. Native paste and clipboard restoration have a separate integration check.
+
 ## 0.6.6 · 12 October 2026
 
 - Quick buzz and silent activation send the capture command before opening the recording overlay.

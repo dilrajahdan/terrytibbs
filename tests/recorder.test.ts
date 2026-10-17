@@ -85,6 +85,10 @@ class FakeContext {
   async close(): Promise<void> { this.closed = true; this.state = 'closed' }
   addEventListener(type: string, listener: Listener): void { if (type === 'statechange') this.listeners.add(listener) }
   removeEventListener(type: string, listener: Listener): void { if (type === 'statechange') this.listeners.delete(listener) }
+  changeState(state: AudioContextState): void {
+    this.state = state
+    for (const listener of this.listeners) listener()
+  }
 }
 
 interface Harness {
@@ -149,6 +153,336 @@ function harness(
 async function flushMicrotasks(): Promise<void> {
   await new Promise<void>(resolve => setImmediate(resolve))
 }
+
+function recoveryHarness(getMedia?: (track: FakeTrack, constraints: MediaStreamConstraints) => Promise<MediaStream>) {
+  const tracks: FakeTrack[] = []
+  const contexts: FakeContext[] = []
+  const nodes: FakeNode[] = []
+  const timers = new Map<number, { callback: () => void; deadline: number }>()
+  let timestamp = 0
+  let timerId = 0
+  const stream = (track: FakeTrack) => ({ getAudioTracks: () => [track], getTracks: () => [track] }) as unknown as MediaStream
+  const subject = harness(async constraints => {
+    const track = new FakeTrack()
+    tracks.push(track)
+    return getMedia ? getMedia(track, constraints) : stream(track)
+  }, undefined, {
+    now: () => timestamp,
+    createAudioContext: () => {
+      const context = new FakeContext()
+      contexts.push(context)
+      return context as unknown as AudioContext
+    },
+    createWorkletNode: () => {
+      const node = new FakeNode()
+      nodes.push(node)
+      return node as unknown as AudioWorkletNode
+    },
+    setTimeout: ((callback: () => void, delay: number) => {
+      const id = ++timerId
+      timers.set(id, { callback, deadline: timestamp + delay })
+      return id
+    }) as unknown as typeof setTimeout,
+    clearTimeout: ((id: number) => { timers.delete(id) }) as unknown as typeof clearTimeout
+  })
+  const advance = async (milliseconds: number) => {
+    const destination = timestamp + milliseconds
+    for (;;) {
+      const next = [...timers].filter(([, timer]) => timer.deadline <= destination).sort((a, b) => a[1].deadline - b[1].deadline)[0]
+      if (!next) break
+      timestamp = next[1].deadline
+      timers.delete(next[0])
+      next[1].callback()
+      await flushMicrotasks()
+    }
+    timestamp = destination
+    await flushMicrotasks()
+  }
+  return { ...subject, tracks, contexts, nodes, timers, advance, stream }
+}
+
+test('an idle microphone reconnects automatically after interruption and becomes ready only after audio', async () => {
+  const subject = recoveryHarness()
+  subject.controller.prepare(true, 'mic-1')
+  await flushMicrotasks()
+  subject.nodes[0].port.emit({ type: 'prepared' })
+  subject.tracks[0].emit('ended')
+  for (let update = 0; update < 5; update += 1) subject.controller.prepare(true, 'mic-1')
+  await subject.advance(249)
+  assert.equal(subject.tracks.length, 1, 'State feedback must neither restart immediately nor reset backoff')
+  await subject.advance(1)
+  assert.equal(subject.tracks.length, 2, 'A disconnected ready microphone must rearm without another shortcut press')
+  assert.equal(subject.events.prepared.at(-1)?.ready, false, 'Acquiring a replacement track is not evidence of audio')
+  subject.nodes[1].port.emit({ type: 'prepared' })
+  assert.equal(subject.events.prepared.at(-1)?.ready, true)
+  subject.controller.handle({ action: 'start', sessionId: 30, microphoneId: 'mic-1' })
+  assert.equal(subject.nodes[1].port.posted.at(-1)?.type, 'begin', 'Recovered warm start remains synchronous')
+  assert.equal(subject.tracks.length, 2)
+  subject.controller.destroy()
+})
+
+test('idle track mute and AudioContext suspension both reconnect without waiting for dictation', async () => {
+  for (const interrupt of ['mute', 'context'] as const) {
+    const subject = recoveryHarness()
+    subject.controller.prepare(true, 'mic-1')
+    await flushMicrotasks()
+    subject.nodes[0].port.emit({ type: 'prepared' })
+    if (interrupt === 'mute') subject.tracks[0].emit('mute')
+    else subject.contexts[0].changeState('suspended')
+    assert.equal(subject.contexts[0].closed, true)
+    assert.equal(subject.events.prepared.at(-1)?.ready, false)
+    await subject.advance(250)
+    assert.equal(subject.tracks.length, 2, interrupt)
+    assert.deepEqual(subject.events.failed, [], 'Idle reconnection must not invent a failed recording')
+    subject.controller.destroy()
+  }
+})
+
+test('unavailable selected input has bounded backoff, no default fallback and recovers on devicechange', async () => {
+  let unavailable = true
+  const requests: string[] = []
+  const subject = recoveryHarness(async (track, constraints) => {
+    requests.push(((constraints.audio as MediaTrackConstraints).deviceId as { exact: string }).exact)
+    if (unavailable) throw new DOMException('unplugged', 'NotFoundError')
+    return subject.stream(track)
+  })
+  subject.controller.prepare(true, 'selected-mic')
+  await flushMicrotasks()
+  await subject.advance(250)
+  assert.equal(requests.length, 2)
+  await subject.advance(999)
+  assert.equal(requests.length, 2)
+  await subject.advance(1)
+  assert.equal(requests.length, 3)
+  await subject.advance(2_999)
+  assert.equal(requests.length, 3)
+  await subject.advance(1)
+  assert.equal(requests.length, 4)
+  for (let update = 0; update < 10; update += 1) subject.controller.prepare(true, 'selected-mic')
+  await subject.advance(120_000)
+  assert.equal(requests.length, 4, 'A persistently absent device must not be polled forever')
+  assert.deepEqual([...new Set(requests)], ['selected-mic'])
+  assert.equal(subject.timers.size, 0)
+  unavailable = false
+  subject.controller.devicesChanged()
+  await flushMicrotasks()
+  assert.equal(requests.length, 5)
+  subject.nodes[4].port.emit({ type: 'prepared' })
+  assert.equal(subject.events.prepared.at(-1)?.ready, true)
+  subject.controller.devicesChanged()
+  assert.equal(requests.length, 5, 'An unrelated device event must not interrupt healthy audio')
+  subject.controller.destroy()
+})
+
+test('permission denial stops automatic attempts and device events; only an explicit retry can retry it', async () => {
+  let denied = true
+  const subject = recoveryHarness(async track => {
+    if (denied) throw new DOMException('denied', 'NotAllowedError')
+    return subject.stream(track)
+  })
+  subject.controller.prepare(true, 'mic-1')
+  await flushMicrotasks()
+  subject.controller.devicesChanged()
+  subject.controller.prepare(true, 'mic-1')
+  await subject.advance(120_000)
+  assert.equal(subject.tracks.length, 1)
+  assert.equal(subject.timers.size, 0)
+  assert.match(subject.events.prepared.at(-1)?.message ?? '', /access is blocked/)
+  denied = false
+  assert.equal(subject.controller.retryPreparation(), true)
+  await flushMicrotasks()
+  assert.equal(subject.tracks.length, 2)
+  assert.equal(subject.events.prepared.at(-1)?.ready, false)
+  subject.nodes[1].port.emit({ type: 'prepared' })
+  assert.equal(subject.events.prepared.at(-1)?.ready, true)
+  subject.controller.destroy()
+})
+
+test('short lived audio does not reset recovery budget but a stable recovered input does', async () => {
+  const subject = recoveryHarness()
+  subject.controller.prepare(true, 'mic-1')
+  await flushMicrotasks()
+  for (const [index, delay] of [250, 1_000, 3_000].entries()) {
+    subject.nodes[index].port.emit({ type: 'prepared' })
+    subject.tracks[index].emit('ended')
+    await subject.advance(delay)
+  }
+  assert.equal(subject.tracks.length, 4)
+  subject.nodes[3].port.emit({ type: 'prepared' })
+  subject.tracks[3].emit('ended')
+  await subject.advance(120_000)
+  assert.equal(subject.tracks.length, 4, 'Flapping through real frames cannot produce an endless retry loop')
+  assert.equal(subject.controller.retryPreparation(), true)
+  await flushMicrotasks()
+  subject.nodes[4].port.emit({ type: 'prepared' })
+  subject.tracks[4].emit('ended')
+  await subject.advance(250)
+  subject.nodes[5].port.emit({ type: 'prepared' })
+  await subject.advance(30_000)
+  subject.tracks[5].emit('ended')
+  await subject.advance(250)
+  assert.equal(subject.tracks.length, 7, 'A later independent failure after stable operation gets fresh recovery attempts')
+  subject.controller.destroy()
+})
+
+test('a track that never delivers audio times out and stops after bounded recovery', async () => {
+  const subject = recoveryHarness()
+  subject.controller.prepare(true, 'mic-1')
+  await flushMicrotasks()
+  await subject.advance(30_000)
+  assert.equal(subject.tracks.length, 4)
+  assert.equal(subject.events.prepared.some(event => event.ready), false)
+  assert.equal(subject.tracks.every(track => track.readyState === 'ended'), true)
+  assert.equal(subject.timers.size, 0)
+  assert.match(subject.events.prepared.at(-1)?.message ?? '', /did not produce audio/)
+  subject.controller.destroy()
+})
+
+test('suspend, permission withdrawal and destruction cancel recovery and reject explicit or device retries', async () => {
+  for (const action of ['suspend', 'disable', 'destroy'] as const) {
+    const subject = recoveryHarness()
+    subject.controller.prepare(true, 'mic-1')
+    await flushMicrotasks()
+    subject.nodes[0].port.emit({ type: 'prepared' })
+    subject.tracks[0].emit('ended')
+    if (action === 'disable') subject.controller.prepare(false, 'mic-1')
+    else subject.controller[action]()
+    subject.controller.devicesChanged()
+    assert.equal(subject.controller.retryPreparation(), false)
+    await subject.advance(120_000)
+    assert.equal(subject.tracks.length, 1, action)
+    assert.equal(subject.timers.size, 0)
+    subject.controller.destroy()
+  }
+})
+
+test('a new recording bypasses recovery delay without leaving a stale retry timer', async () => {
+  const subject = recoveryHarness()
+  subject.controller.prepare(true, 'mic-1')
+  await flushMicrotasks()
+  subject.nodes[0].port.emit({ type: 'prepared' })
+  subject.tracks[0].emit('ended')
+  subject.controller.handle({ action: 'start', sessionId: 31, microphoneId: 'mic-1' })
+  await flushMicrotasks()
+  assert.equal(subject.tracks.length, 2)
+  subject.nodes[1].port.emit({ type: 'audio', samples: new Float32Array([0.2]) })
+  assert.equal(subject.controller.retryPreparation(), false, 'Retry cannot replace an active recording')
+  subject.controller.devicesChanged()
+  await subject.advance(250)
+  assert.equal(subject.tracks.length, 2)
+  assert.deepEqual(subject.events.started.map(event => event.id), [31])
+  subject.controller.destroy()
+})
+
+test('changing selected input during backoff cancels retry for the previous device', async () => {
+  const requested: string[] = []
+  const subject = recoveryHarness(async (track, constraints) => {
+    requested.push(((constraints.audio as MediaTrackConstraints).deviceId as { exact: string }).exact)
+    return subject.stream(track)
+  })
+  subject.controller.prepare(true, 'old-mic')
+  await flushMicrotasks()
+  subject.nodes[0].port.emit({ type: 'prepared' })
+  subject.tracks[0].emit('ended')
+  subject.controller.prepare(true, 'new-mic')
+  await flushMicrotasks()
+  subject.nodes[1].port.emit({ type: 'prepared' })
+  await subject.advance(10_000)
+  assert.deepEqual(requested, ['old-mic', 'new-mic'])
+  assert.equal(subject.events.prepared.at(-1)?.ready, true)
+  subject.controller.destroy()
+})
+
+test('a stale rejected recovery request cannot clear a newer microphone or schedule its own retry', async () => {
+  let requests = 0
+  let rejectRecovery!: (error: Error) => void
+  const subject = recoveryHarness(async track => {
+    requests += 1
+    if (requests === 2) return new Promise<MediaStream>((_resolve, reject) => { rejectRecovery = reject })
+    return subject.stream(track)
+  })
+  subject.controller.prepare(true, 'old-mic')
+  await flushMicrotasks()
+  subject.nodes[0].port.emit({ type: 'prepared' })
+  subject.tracks[0].emit('ended')
+  await subject.advance(250)
+  subject.controller.prepare(true, 'new-mic')
+  await flushMicrotasks()
+  subject.nodes[2].port.emit({ type: 'prepared' })
+  const reportCount = subject.events.prepared.length
+  rejectRecovery(new DOMException('late rejection', 'NotAllowedError'))
+  await subject.advance(10_000)
+  assert.equal(requests, 3)
+  assert.equal(subject.events.prepared.length, reportCount)
+  assert.equal(subject.contexts[2].closed, false)
+  assert.deepEqual(subject.events.failed, [])
+  subject.controller.destroy()
+})
+
+test('active microphone failure preserves captured speech and prepares the next recording separately', async () => {
+  const subject = recoveryHarness()
+  subject.controller.prepare(true, 'mic-1')
+  await flushMicrotasks()
+  subject.nodes[0].port.emit({ type: 'prepared' })
+  subject.controller.handle({ action: 'start', sessionId: 32, microphoneId: 'mic-1' })
+  subject.nodes[0].port.emit({ type: 'audio', samples: new Float32Array(4_800).fill(0.2) })
+  subject.tracks[0].emit('ended')
+  assert.equal(subject.events.failedSamples[0]?.length, 4_800)
+  assert.deepEqual(subject.events.complete, [])
+  await subject.advance(250)
+  subject.nodes[1].port.emit({ type: 'prepared' })
+  assert.equal(subject.events.prepared.at(-1)?.ready, true)
+  assert.equal(subject.events.failed.length, 1)
+  assert.deepEqual(subject.events.started.map(event => event.id), [32])
+  subject.controller.destroy()
+})
+
+test('recovered graph readiness and first syllable come from actual worklet input frames', async () => {
+  const source = await readFile(new URL('../src/renderer/capture-worklet.js', import.meta.url), 'utf8')
+  const subject = recoveryHarness()
+  subject.controller.prepare(true, 'mic-1')
+  await flushMicrotasks()
+  subject.nodes[0].port.emit({ type: 'prepared' })
+  subject.tracks[0].emit('ended')
+  await subject.advance(250)
+  const port = subject.nodes[1].port
+  type ProcessorInstance = {
+    port: { onmessage: ((event: { data: unknown }) => void) | null; postMessage(message: Record<string, unknown>): void }
+    process(inputs: unknown[], outputs: unknown[]): boolean
+  }
+  let Processor!: new () => ProcessorInstance
+  class FakeProcessor {
+    port = {
+      onmessage: null as ((event: { data: unknown }) => void) | null,
+      postMessage: (message: Record<string, unknown>) => port.emit(message)
+    }
+  }
+  vm.runInNewContext(source, {
+    AudioWorkletProcessor: FakeProcessor,
+    sampleRate: 16_000,
+    registerProcessor: (_name: string, processor: new () => ProcessorInstance) => { Processor = processor }
+  })
+  const processor = new Processor()
+  port.postMessage = message => {
+    port.posted.push(message)
+    processor.port.onmessage?.({ data: message })
+  }
+  processor.port.onmessage?.({ data: port.posted.at(-1) })
+  processor.process([[]], [[new Float32Array(128)]])
+  assert.equal(subject.events.prepared.at(-1)?.ready, false, 'Empty input is not readiness')
+  processor.process([[new Float32Array(128).fill(0.2)]], [[new Float32Array(128)]])
+  assert.equal(subject.events.prepared.at(-1)?.ready, true)
+  assert.equal(subject.events.complete.length, 0, 'Idle audio stays inside the worklet')
+  subject.controller.handle({ action: 'start', sessionId: 33, microphoneId: 'mic-1' })
+  processor.process([[new Float32Array(128).fill(0.4)]], [[new Float32Array(128)]])
+  subject.controller.handle({ action: 'stop', sessionId: 33 })
+  await flushMicrotasks()
+  assert.equal(subject.events.complete[0]?.length, 256)
+  assert.equal(subject.events.complete[0]?.[0], Math.fround(0.2), 'Opening samples from recovered pre-roll survive')
+  assert.equal(subject.events.complete[0]?.[255], Math.fround(0.4), 'Final partial block survives flush')
+  assert.deepEqual(subject.events.failed, [])
+  subject.controller.destroy()
+})
 
 test('AudioWorklet capture starts after and retains the first and partial final blocks', async () => {
   const testHarness = harness()

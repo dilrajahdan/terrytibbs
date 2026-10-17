@@ -13,7 +13,7 @@ CLI: Homebrew cask → open
            microphone icon → hold to talk
 ```
 
-The best ordinary-user route is a signed, notarised DMG containing the app and speech runtime. A Homebrew cask can install that same app with one command once a real repository, hosted releases and cask exist. The [public source repository](https://github.com/DilrajAhdan/terrytibbs) is available. An [unsigned ARM64 preview DMG is available for 0.6.6](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.6), with checksums and [installation instructions](INSTALL.md#dmg-preview-installation). There is no live Homebrew cask. Do not advertise an invented `brew install` command.
+The best ordinary-user route is a signed, notarised DMG containing the app and speech runtime. A Homebrew cask can install that same app with one command once a real repository, hosted releases and cask exist. The [public source repository](https://github.com/DilrajAhdan/terrytibbs) is available. An [unsigned ARM64 preview DMG is available for 0.6.7](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.7), with checksums and [installation instructions](INSTALL.md#dmg-preview-installation). There is no live Homebrew cask. Do not advertise an invented `brew install` command.
 
 The current `npm run install:mac` is a developer shortcut from an extracted source folder. It requires Homebrew, Node.js and Apple developer tools first. It installs dependencies, verifies the Turbo model, builds and copies Terry to `~/Applications`, and opens it. It does not bypass macOS consent, log in for the user or overwrite an existing app.
 
@@ -89,3 +89,16 @@ Full speech capture plus hold delivery and clipboard restoration was observed. T
 An opt-in ready microphone now retains at most 500 ms in its audio-thread ring. Quick buzz and silent activation send capture before overlay work. Cold-start device latency is not eliminated.
 
 The old buffer failed a sample-preservation regression with 350 ms of delayed delivery. The updated buffer passes. The real speech integration check trims the fixture to its opening speech, starts it at the trigger, checks the opening words with an overlapping buzz, then checks a deliberately delayed start command through the real Whisper recogniser. Unit suite: 96 passed, one skipped. This test uses a software microphone and tiny.en, not the user's physical microphone, hardware shortcut or Turbo model. Native paste behaviour is unchanged from 0.6.5.
+
+## 0.6.7 recovery, microphone choice and corrections
+
+- Unit checks: 112 passed, zero failed or skipped. Recovery tests first reproduce the idle interruption, then require actual replacement audio frames, bounded retries, cancellation and permission handling.
+- App checks exercise immediate input selection, an unavailable named input, reconnection, input testing, correction approval/persistence/application/removal and responsive settings. Other regression paths cover the activation cue, first words, lock, silence, shortcut selection and clipboard isolation.
+- A separate native integration sends real public speech through the current Whisper Turbo model, applies a confirmed correction, inserts into an owned editable target and verifies the original clipboard remains intact. Both hold/release and double-tap/next-press passed after an immediately cancelled startup. This uses a software microphone and injected app-level shortcut edges, not physical key presses or a spoken Yeti recording.
+- Local recognition remains Whisper Turbo. The [paired Parakeet comparison](BENCHMARKS.md#parakeet-versus-whisper-17-october-2026) found equal strict word-error scores on 20 public clips, with a lower Parakeet median and one slower outlier. It does not establish better everyday accuracy.
+- `npm audit --omit=dev` reports zero findings. The full build dependency audit reports eight moderate findings and no high/critical findings. These are outside the packaged app's application dependencies; this is not a comprehensive security audit.
+- All 11 app regression tests passed. Settings and correction review were inspected at 1440 and 390 pixels, with checks for control sizes and horizontal overflow.
+- The ARM64 DMG passed `hdiutil verify`. Its mounted app version, minimum OS, Applications shortcut and app/helper/model-detector hashes matched the build. The application archive contains compiled code and package metadata, with no settings, recordings, development dependencies or personal-path/selected-credential-pattern matches.
+- The mounted build was installed over 0.6.6 on the development Mac. Preferences survived; a named USB input was selected in the real UI, opened by Test input and returned to ready status. This confirms device opening, not spoken accuracy or physical unplug/replug recovery.
+
+Physical microphone unplug/replug, a user's natural speech and a fresh Mac installation still require hardware checks. The preview remains unsigned and unnotarised, with separately installed whisper.cpp and model weights.

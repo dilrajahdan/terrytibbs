@@ -81,6 +81,8 @@ The app's download button and `npm run setup` always install Turbo. They do not 
 
 ## Optional cleanup and future engines
 
+Parakeet TDT v3 has now been compared locally with Whisper Turbo on 20 public speech clips. Both scored 8 word errors out of 352 reference words. Parakeet's median request was 114 ms versus 424 ms, but its worst request was slower. This small sample does not establish better accuracy on natural mumbling or names. Terry keeps Whisper as its production engine; Parakeet is available only in the [reproducible developer benchmark](PARAKEET-BENCHMARK.md). See [the measured results and limits](BENCHMARKS.md).
+
 Local Ollama cleanup is a separate choice in **Settings → Local cleanup**. Start without it. If enabled, Terry accepts a locally installed model and talks only to `127.0.0.1:11434`; failure falls back to the real raw transcript. Check names, amounts and wording before treating a polished result as more accurate. Each cleanup model has its own resource requirements and licence.
 
 WhisperKit is a possible future native engine, not something you can select in Terry today. It uses a different integration and model packaging. Adding it would need the same capture, recognition and paste tests as the current engine. [Official project](https://github.com/argmaxinc/argmax-oss-swift)

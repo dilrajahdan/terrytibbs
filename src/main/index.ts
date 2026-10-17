@@ -15,6 +15,7 @@ import { WarmAudioService, type AudioLease } from './warm-audio'
 import { ShortcutGesture } from './gesture'
 import { createHotkeyMonitor, type HotkeyEvent } from './hotkey'
 import { formatShortcut, parseShortcut } from '../shared/shortcut'
+import { applyCorrections, suggestCorrections, validateCorrections } from '../shared/corrections'
 
 const e2e = !app.isPackaged && process.env.TERRY_E2E === '1'
 if (e2e && process.env.TERRY_USER_DATA) app.setPath('userData', process.env.TERRY_USER_DATA)
@@ -273,7 +274,8 @@ async function processAudio(wav: Buffer, id: number, paste: boolean) {
     if (settings.cleanupEnabled) setState({ phase: 'cleaning', message: 'Tidying with your local model…' })
     const cleaned = await cleanTranscript(result.raw, settings, controller.signal)
     if (id !== activeId) return
-    const transcript = { ...rawTranscript, text: cleaned.text, processingMs: Math.round(performance.now() - start) }
+    const text = settings.correctionsEnabled ? applyCorrections(cleaned.text, settings.corrections) : cleaned.text
+    const transcript = { ...rawTranscript, text, processingMs: Math.round(performance.now() - start) }
     controller.signal.throwIfAborted()
     if (id !== activeId) return
     let message = cleaned.warning ? `${cleaned.warning} Copied to clipboard.` : 'Copied to clipboard. Paste wherever you like.'
@@ -281,12 +283,12 @@ async function processAudio(wav: Buffer, id: number, paste: boolean) {
     if (paste && settings.autoPaste) {
       const target = await recordingDestination
       if (id !== activeId || controller.signal.aborted) return
-      const result = await pasteTranscript(helper, cleaned.text, target, controller.signal)
+      const result = await pasteTranscript(helper, text, target, controller.signal)
       if (id !== activeId) return
       delivery = result.status
       message = cleaned.warning ? `${cleaned.warning} ${result.message}` : result.message
     }
-    if (delivery === 'clipboard') clipboard.writeText(cleaned.text)
+    if (delivery === 'clipboard') clipboard.writeText(text)
     operation = null
     gesture.reset()
     releaseEscape()
@@ -368,7 +370,8 @@ function suspendShortcut(paused: boolean): Promise<void> {
 function showSettings() { main.show(); main.webContents.send('terry:settings') }
 function updateTray() {
   if (!tray || !state) return
-  const signature = `${state.phase}:${state.recordingMode}:${state.shortcutReady}:${state.settings.shortcut}`
+  const micLabel = state.microphoneReady || state.phase === 'recording' ? state.inputDevice?.label : state.settings.microphoneLabel
+  const signature = JSON.stringify([state.phase, state.recordingMode, state.shortcutReady, state.settings.shortcut, micLabel, state.microphoneReady])
   if (signature === traySignature) return
   traySignature = signature
   const activity = state.phase === 'recording' ? (state.recordingMode === 'locked' ? '▣' : '●') : isBusy() ? '···' : ''
@@ -377,6 +380,7 @@ function updateTray() {
   tray.setToolTip(`Terry Tibbs: ${state.phase}${state.recordingMode === 'locked' ? ', locked' : ''}. ${formatShortcut(state.settings.shortcut)}`)
   trayMenu = Menu.buildFromTemplate([
     { label: 'Open Terry Tibbs', click: () => main.show() },
+    { label: `Microphone: ${micLabel || 'System default'}…`, click: () => { main.show(); main.webContents.send('terry:settings', 'microphone') } },
     { label: `Shortcut: ${formatShortcut(state.settings.shortcut)}…`, click: () => { main.show(); main.webContents.send('terry:settings', 'shortcut') } },
     { label: state.shortcutReady ? 'Hold to talk · double-tap to lock' : 'Enable shortcut access in Settings', enabled: false },
     { type: 'separator' },
@@ -393,8 +397,9 @@ async function saveSettings(value: unknown) {
   const settings = validateSettings(value)
   parseShortcut(settings.shortcut)
   const changed = settings.shortcut !== state.settings.shortcut
+  const inputChanged = settings.microphoneId !== state.settings.microphoneId
   persistSettings(app.getPath('userData'), settings)
-  setState({ settings, phase: 'ready', message: 'Settings saved. Hold to talk, or double-tap to lock.' })
+  setState({ settings, phase: 'ready', message: 'Settings saved. Hold to talk, or double-tap to lock.', ...(inputChanged ? { inputDevice: null, inputWarning: '', microphoneReady: false, microphonePreparation: '' } : {}) })
   if (changed) startMonitor()
   void prepareSpeechEngine(settings)
   prepareBackgroundAudio()
@@ -416,6 +421,23 @@ function ipc() {
   handle('import-audio', importAudio)
   handle('refresh', refresh)
   handle('save-settings', saveSettings)
+  handle('select-microphone', async (deviceId: unknown, label: unknown) => {
+    if (typeof deviceId !== 'string' || typeof label !== 'string') throw new Error('Choose a valid microphone.')
+    await saveSettings({ ...state.settings, microphoneId: deviceId, microphoneLabel: label })
+    setState({ message: `${label || 'System default microphone'} selected and saved.` })
+  })
+  handle('learn-corrections', (createdAt: unknown, correctedText: unknown, selected: unknown) => {
+    if (isBusy()) throw new Error('Finish dictation before saving corrections.')
+    if (!state.transcript || state.transcript.createdAt !== createdAt) throw new Error('The transcript changed. Reopen Correct words for the latest text.')
+    if (typeof correctedText !== 'string' || !correctedText.trim() || correctedText.length > 10_000 || correctedText.includes('\0')) throw new Error('Use a corrected transcript of up to 10,000 characters.')
+    const rules = validateCorrections(selected)
+    const suggestions = suggestCorrections(state.transcript.text, correctedText)
+    if (!rules.length || rules.some(rule => !suggestions.some(item => item.from === rule.from && item.to === rule.to))) throw new Error('Review the suggested word corrections before saving.')
+    const settings = validateSettings({ ...state.settings, corrections: [...state.settings.corrections, ...rules] })
+    persistSettings(app.getPath('userData'), settings)
+    const message = `${rules.length} correction${rules.length === 1 ? '' : 's'} remembered on this Mac. Corrected text is ready to copy; the previous paste is unchanged.`
+    setState({ settings, transcript: { ...state.transcript, text: correctedText.trim(), deliveryMessage: message }, message })
+  })
   handle('list-sound-clips', async (value: unknown) => availableSoundClips(validateSettings(value).activationSoundDirectory))
   handle('show-settings', showSettings)
   handle('copy', async (raw: unknown) => {

@@ -5,7 +5,7 @@
       <select
         id="microphoneId"
         :value="settings.microphoneId"
-        :disabled="testing || requesting"
+        :disabled="testing || requesting || busy || saving"
         @change="selectDevice"
       >
         <option value="">System default</option>
@@ -19,14 +19,14 @@
       <small v-if="devicesLoading" role="status">Looking for audio inputs…</small>
       <small v-else-if="devicesError" class="field-error" role="alert">{{ devicesError }}</small>
       <small v-else-if="selectedUnavailable" class="field-error">The saved microphone is disconnected. Reconnect it or choose another input. Terry will not silently fall back.</small>
-      <small v-else>Choose a specific input for dependable daily dictation, or follow the macOS default.</small>
+      <small v-else>{{ saving ? 'Saving microphone…' : 'Selection saves immediately. Choose a named input to keep using that microphone.' }}</small>
     </div>
 
     <div class="actual-input" :class="{ warning: displayWarning }" role="status" aria-live="polite">
       <span class="actual-input-dot" aria-hidden="true"></span>
       <span>
-        <strong>{{ displayDevice ? `Actual input: ${displayDevice.label || 'Unnamed microphone'}` : requesting ? 'Opening the selected input' : 'Actual input not measured yet' }}</strong>
-        <small v-if="displayDevice">{{ formatSampleRate(displayDevice.sampleRate) }} {{ !testDevice && prepared ? 'ready for dictation' : `during the latest ${testDevice ? 'input test' : 'dictation'}` }}</small>
+        <strong>{{ displayDevice ? `${prepared || testing ? 'Using' : 'Last measured input'}: ${displayDevice.label || 'Unnamed microphone'}` : requesting ? 'Opening the selected input' : 'Actual input not measured yet' }}</strong>
+        <small v-if="displayDevice">{{ formatSampleRate(displayDevice.sampleRate) }} {{ prepared && !testing ? 'ready for dictation' : `during the latest ${testDevice ? 'input test' : 'dictation'}` }}</small>
         <small v-else>{{ requesting ? 'The previous input is hidden until this request resolves.' : 'Start a dictation or run the input test below.' }}</small>
         <small v-if="displayWarning" class="field-error">{{ displayWarning }}</small>
       </span>
@@ -53,7 +53,7 @@
       </div>
       <div class="input-test-actions">
         <button v-if="testing || requesting" class="button secondary small" type="button" @click="stopTest('manual')">Stop test</button>
-        <button v-else class="button secondary small" type="button" :disabled="busy || selectedUnavailable" @click="startTest">Test input</button>
+        <button v-else class="button secondary small" type="button" :disabled="busy || saving || selectedUnavailable" @click="startTest">Test input</button>
         <button class="text-button" type="button" :disabled="testing || requesting" @click="refreshDevices">Refresh inputs</button>
       </div>
       <p v-if="testMessage" :class="['input-test-message', { error: testError }]" :role="testError ? 'alert' : 'status'">{{ testMessage }}</p>
@@ -70,6 +70,8 @@ const props = defineProps<{
   inputDevice: InputDevice | null
   inputWarning: string
   prepared?: boolean
+  preparation?: string
+  saving?: boolean
   phase: string
   busy: boolean
 }>()
@@ -102,8 +104,12 @@ let clipped = false
 let disposed = false
 
 const selectedUnavailable = computed(() => !devicesLoading.value && !!props.settings.microphoneId && !devices.value.some(device => device.deviceId === props.settings.microphoneId))
-const displayDevice = computed(() => testDevice.value || (!requesting.value && !suppressDictationDevice.value ? props.inputDevice : null))
-const displayWarning = computed(() => testDevice.value || suppressDictationDevice.value ? '' : props.inputWarning)
+const displayDevice = computed(() => {
+  if (requesting.value || suppressDictationDevice.value) return null
+  if (testing.value) return testDevice.value
+  return props.prepared ? props.inputDevice : testDevice.value || props.inputDevice
+})
+const displayWarning = computed(() => testing.value || requesting.value || suppressDictationDevice.value ? '' : props.inputWarning || (props.settings.keepMicrophoneReady && !props.prepared ? props.preparation : ''))
 const meterPercent = computed(() => {
   if (level.value <= 0) return 0
   const decibels = 20 * Math.log10(level.value)
@@ -255,8 +261,8 @@ function stopTest(reason: 'manual' | 'timeout' | 'hide' | 'capture' | 'busy' | '
   if (!wasTesting && ['hide', 'capture', 'busy', 'preview', 'replace'].includes(reason)) return
   testError.value = reason === 'error'
   if (reason === 'error') testMessage.value = errorMessage || 'The microphone test stopped unexpectedly.'
-  else if (reason === 'timeout') testMessage.value = wasRequesting ? 'The selected microphone did not open within 10 seconds. It is off.' : highestRms >= 0.003 ? '10 second test finished. The microphone is off.' : '10 second test finished without a clear signal. Check the selected input and its gain.'
-  else if (reason === 'manual') testMessage.value = 'Input test stopped. The microphone is off.'
+  else if (reason === 'timeout') testMessage.value = wasRequesting ? 'The selected microphone did not open within 10 seconds.' : highestRms >= 0.003 ? `10 second test finished.${props.settings.keepMicrophoneReady ? ' Dictation readiness resumes.' : ' The microphone is off.'}` : '10 second test finished without a clear signal. Check the selected input and its gain.'
+  else if (reason === 'manual') testMessage.value = `Input test stopped.${props.settings.keepMicrophoneReady ? ' Dictation readiness resumes.' : ' The microphone is off.'}`
   else testMessage.value = ''
 }
 

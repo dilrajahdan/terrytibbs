@@ -7,6 +7,8 @@ const api: TerryAPI = {
   retry: () => invoke('retry'), importAudio: () => invoke('import-audio'), refresh: () => invoke('refresh'),
   copyTranscript: raw => invoke('copy', raw), clearTranscript: () => invoke('clear'),
   saveSettings: (settings: Settings) => invoke('save-settings', settings),
+  selectMicrophone: (deviceId, label) => invoke('select-microphone', deviceId, label),
+  learnCorrections: (createdAt, correctedText, corrections) => invoke('learn-corrections', createdAt, correctedText, corrections),
   previewSound: settings => invoke('preview-sound', settings),
   listSoundClips: settings => invoke('list-sound-clips', settings),
   chooseFile: kind => invoke('choose-file', kind), downloadModel: () => invoke('download-model'),
@@ -17,7 +19,7 @@ const api: TerryAPI = {
     return () => ipcRenderer.removeListener('terry:shortcut-candidate', listener)
   },
   onOpenSettings(callback) {
-    const listener = (_event: Electron.IpcRendererEvent, target: unknown) => callback(target === 'shortcut' ? 'shortcut' : undefined)
+    const listener = (_event: Electron.IpcRendererEvent, target: unknown) => callback(target === 'shortcut' || target === 'microphone' ? target : undefined)
     ipcRenderer.on('terry:settings', listener)
     return () => ipcRenderer.removeListener('terry:settings', listener)
   },

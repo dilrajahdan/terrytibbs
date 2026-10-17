@@ -10,6 +10,8 @@ const FIRST_FRAME_TIMEOUT_MS = 5_000
 const FLUSH_TIMEOUT_MS = 1_000
 const CONTEXT_RESUME_TIMEOUT_MS = 750
 const NO_INPUT_LEVEL = 0.003
+const RECOVERY_DELAYS_MS = [250, 1_000, 3_000]
+const RECOVERY_STABLE_MS = 30_000
 
 type Timer = ReturnType<typeof setTimeout>
 
@@ -102,9 +104,60 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
   let suspended = false
   let nextFlushRequestId = 0
   let nextCaptureId = 0
+  let recoveryTimer: Timer | null = null
+  let recoveryAttempts = 0
+  let readySince: number | null = null
+  let permissionBlocked = false
 
   function reportPrepared(ready: boolean, inputDevice?: InputDevice, message?: string): void {
     api.capturePrepared?.(ready, inputDevice, message)
+  }
+
+  function clearRecoveryTimer(): void {
+    if (recoveryTimer !== null) clearTimer(recoveryTimer)
+    recoveryTimer = null
+  }
+
+  function resetRecovery(): void {
+    clearRecoveryTimer()
+    recoveryAttempts = 0
+    readySince = null
+    permissionBlocked = false
+  }
+
+  function mayPrepare(): boolean {
+    return armedEnabled && !suspended && !destroyed && !active && !pendingResources
+  }
+
+  function scheduleRecovery(): void {
+    if (!mayPrepare() || graph || recoveryTimer !== null || permissionBlocked) return
+    // A brief successful connection must not reset the budget for a flapping
+    // device. No timer or background polling is needed while audio is healthy.
+    if (readySince !== null && now() - readySince >= RECOVERY_STABLE_MS) recoveryAttempts = 0
+    readySince = null
+    if (recoveryAttempts >= RECOVERY_DELAYS_MS.length) return
+    const delay = RECOVERY_DELAYS_MS[recoveryAttempts++]
+    const ownerGeneration = generation
+    recoveryTimer = setTimer(() => {
+      recoveryTimer = null
+      if (generation !== ownerGeneration || !mayPrepare() || graph || permissionBlocked) return
+      void openGraph(null, armedMicrophoneId)
+    }, delay)
+  }
+
+  function retryPreparation(): boolean {
+    if (!mayPrepare()) return false
+    resetRecovery()
+    cancel(undefined, false)
+    void openGraph(null, armedMicrophoneId)
+    return true
+  }
+
+  function devicesChanged(): void {
+    // Device events can also describe an unrelated output. Preserve a healthy
+    // graph and active dictation; only an unavailable selected input needs retry.
+    if (!mayPrepare() || graph || permissionBlocked) return
+    retryPreparation()
   }
 
   function prepare(enabled: boolean, microphoneId?: string): void {
@@ -118,6 +171,7 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
     armedMicrophoneId = microphoneId
     suspended = false
     if (destroyed || !changed) return
+    resetRecovery()
     // Changing the selected device or withdrawing consent closes every old track,
     // including one whose permission promise has not resolved yet.
     cancel(undefined, false)
@@ -136,6 +190,8 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
 
   function start(sessionId: number, microphoneId?: string, includePreRoll = true): void {
     if (destroyed || active?.sessionId === sessionId || pendingSession === sessionId) return
+    clearRecoveryTimer()
+    permissionBlocked = false
     if (active) cancelActive(true)
     if (graph && graph.microphoneId === microphoneId && shouldKeepReady(graph)) {
       generation += 1
@@ -224,7 +280,7 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
         stateChanged: () => {
           if (graph !== prepared) return
           if (active?.graph === prepared) handleContextState(active)
-          else if (prepared.context.state !== 'running') graphFailed(prepared, 'The ready microphone was interrupted. Enable instant start again to reconnect it.')
+          else if (prepared.context.state !== 'running') graphFailed(prepared, 'The ready microphone was interrupted.')
         }
       }
       graph = prepared
@@ -254,8 +310,10 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
       else closePendingResources(attempt)
       if (!isCurrent()) return
       pendingSession = null
+      permissionBlocked = error instanceof DOMException && (error.name === 'NotAllowedError' || error.name === 'SecurityError')
       reportPrepared(false, undefined, captureErrorMessage(error))
       if (failedSession !== null) api.captureFailed(failedSession, captureErrorMessage(error))
+      scheduleRecovery()
     }
   }
 
@@ -282,6 +340,7 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
     if (graph !== prepared) return
     if (message.type === 'prepared') {
       prepared.ready = true
+      readySince ??= now()
       if (prepared.preparedTimeout !== null) clearTimer(prepared.preparedTimeout)
       prepared.preparedTimeout = null
       if (shouldKeepReady(prepared)) reportPrepared(true, prepared.inputDevice)
@@ -294,6 +353,7 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
       if (!capture.firstFrameReceived) {
         capture.firstFrameReceived = true
         prepared.ready = true
+        readySince ??= now()
         if (shouldKeepReady(prepared)) reportPrepared(true, prepared.inputDevice)
         capture.lastSignalAt = now()
         clearTimer(capture.firstFrameTimeout)
@@ -334,6 +394,7 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
     else {
       closeGraph(prepared)
       reportPrepared(false, undefined, message)
+      scheduleRecovery()
     }
   }
 
@@ -449,6 +510,7 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
     if (active !== capture || capture.generation !== generation) return
     active = null
     releaseCapture(capture, acknowledged)
+    if (!graph) scheduleRecovery()
     if (!acknowledged) {
       api.captureFailed(sessionId, 'Microphone capture did not finish cleanly. Try again.', recoverySamples(capture))
       return
@@ -464,6 +526,7 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
   function cancel(sessionId?: number, retainReady = true): void {
     if (sessionId !== undefined && active && active.sessionId !== sessionId) return
     if (sessionId !== undefined && pendingSession !== null && pendingSession !== sessionId) return
+    clearRecoveryTimer()
     generation += 1
     pendingSession = null
     if (pendingResources) closePendingResources(pendingResources.generation)
@@ -536,6 +599,7 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
     const capture = active
     cancel(sessionId, false)
     api.captureFailed(sessionId, message, recoverySamples(capture))
+    scheduleRecovery()
   }
 
   function handle(command: CaptureCommand): void {
@@ -550,7 +614,7 @@ export function createCaptureController(api: TerryAPI, options: CaptureControlle
     cancel(undefined, false)
   }
 
-  return { handle, prepare, suspend, destroy }
+  return { handle, prepare, retryPreparation, devicesChanged, suspend, destroy }
 }
 
 function stopTracks(stream: MediaStream): void { for (const track of stream.getTracks()) track.stop() }

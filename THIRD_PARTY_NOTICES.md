@@ -29,3 +29,16 @@ Downloaded and checked at build time, included in the app, used offline through
 whisper.cpp's separately installed whisper-vad-speech-segments executable.
 It classifies speech before recognition and does not remove or trim audio.
 The full upstream licence is in resources/SILERO-LICENSE.txt.
+
+## Optional benchmark dependencies
+
+These are downloaded only by the developer comparison scripts. They are not
+bundled in the application or used by ordinary dictation.
+
+- FluidAudio 0.17.7: Apache 2.0, https://github.com/FluidInference/FluidAudio.
+- Parakeet TDT 0.6B v3: NVIDIA model, CC BY 4.0, https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3.
+- FluidInference CoreML conversion: CC BY 4.0, https://huggingface.co/FluidInference/parakeet-tdt-0.6b-v3-coreml.
+- LibriSpeech: Vassil Panayotov with Daniel Povey, CC BY 4.0, https://www.openslr.org/12. Derived from LibriVox audiobooks. Recordings remain outside the source export.
+
+Pinned revisions, checksums and reproduction steps are in
+[the comparison guide](docs/PARAKEET-BENCHMARK.md) and its linked results.

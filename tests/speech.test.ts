@@ -29,6 +29,8 @@ function settings(overrides: Partial<Settings> = {}): Settings {
     shortcut: 'Alt+Space',
     language: 'en',
     vocabulary: '',
+    correctionsEnabled: true,
+    corrections: [],
     autoPaste: false,
     cleanupEnabled: false,
     cleanupModel: '', muteOtherAudio: false, keepMicrophoneReady: false, activationSound: 'off', activationSoundDirectory: '', activationSoundClip: '', microphoneId: '', microphoneLabel: '',
