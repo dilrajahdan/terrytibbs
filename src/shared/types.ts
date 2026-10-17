@@ -1,10 +1,13 @@
 export type Phase = 'ready' | 'starting' | 'recording' | 'transcribing' | 'cleaning' | 'error'
+export interface Correction { from: string; to: string }
 export interface Settings {
   whisperPath: string
   modelPath: string
   shortcut: string
   language: string
   vocabulary: string
+  correctionsEnabled: boolean
+  corrections: Correction[]
   keepMicrophoneReady: boolean
   muteOtherAudio: boolean
   autoPaste: boolean
@@ -63,6 +66,8 @@ export interface TerryAPI {
   copyTranscript(raw?: boolean): Promise<void>
   clearTranscript(): Promise<void>
   saveSettings(settings: Settings): Promise<void>
+  selectMicrophone(deviceId: string, label: string): Promise<void>
+  learnCorrections(createdAt: number, correctedText: string, corrections: Correction[]): Promise<void>
   chooseFile(kind: 'engine' | 'model' | 'sounds'): Promise<string | null>
   previewSound(settings: Settings): Promise<{ played: boolean; warning?: string }>
   listSoundClips(settings: Settings): Promise<SoundClip[]>
@@ -70,7 +75,7 @@ export interface TerryAPI {
   refresh(): Promise<void>
   openPermission(kind: 'microphone' | 'accessibility'): Promise<void>
   showSettings(): Promise<void>
-  onOpenSettings(callback: (target?: 'shortcut') => void): () => void
+  onOpenSettings(callback: (target?: 'shortcut' | 'microphone') => void): () => void
   onState(callback: (state: AppState) => void): () => void
   onCapture(callback: (command: CaptureCommand) => void): () => void
   capturePrepared(ready: boolean, inputDevice?: InputDevice, message?: string): void

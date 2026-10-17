@@ -75,6 +75,32 @@ The Neo guide's `small.en` download/checksum command was also exercised in an is
 
 This table should grow as real evidence arrives. Blank or untested results are not zeros.
 
+## Parakeet versus Whisper, 17 October 2026
+
+**Parakeet was faster on the typical request, but this test did not establish better accuracy.** Terry keeps Whisper Turbo as its production engine. Parakeet remains a benchmark candidate, not a bundled or selectable recogniser in this release.
+
+We compared the same 20 public LibriSpeech recordings from 20 speakers, half from `test-clean` and half from the more challenging `test-other` subset. Selection happened before recognition. There were 352 reference words across 127.755 seconds of speech, with three paired timing rounds and a separate known-good speech control through both engines.
+
+| Measure | Whisper large-v3-turbo | Parakeet TDT v3 |
+|---|---:|---:|
+| Strict word errors | 8 / 352 (2.27%) | 8 / 352 (2.27%) |
+| First word and first three words match | 19 / 20 clips | 19 / 20 clips |
+| Median warm recognition request | 424 ms | 114 ms |
+| 95th percentile across 60 requests | 773 ms | 227 ms |
+| Slowest observed request | 1,168 ms | 1,796 ms |
+| Process startup, file caches warm | 1,980 ms | 354 ms |
+| First control inference after startup | 575 ms | 130 ms |
+
+Apple M2 Max, 96 GB, macOS 15.5; whisper.cpp 1.9.4 and FluidAudio 0.17.7, with a pinned int8 Parakeet v3 CoreML conversion. Both models stayed loaded, English was selected, and vocabulary/cleanup were off. Warm time includes file loading, conversion and local IPC/HTTP; it excludes microphone capture, speech detection, activation sounds and paste. We held off development builds and other test recognitions during the accepted run, but this was still a normal desktop workload. A preliminary run overlapping development work was discarded. Transcripts were stable across all three accepted rounds.
+
+Parakeet's median was approximately 3.7 times faster. Its one 1.796-second outlier means it was **not faster on every request**. First-use CoreML preparation can also take considerably longer than the cached startup shown above. Sixty requests are too few to establish a reliable production tail-latency guarantee.
+
+The accuracy numbers need context. Several scored errors were spelling, joined words or number formatting, such as `specialised` versus `specialized` and `thirty six` versus `36`. Both models wrote `There` for the opening `They're`, explaining the one opening-prefix mismatch. That was a word-choice error, not missing recorded audio. Both struggled with the rare name `Chouette`; neither result demonstrates better understanding of natural mumbling or this user's voice.
+
+**Decision:** retain Turbo for this release. Parakeet deserves a further local trial on deliberately recorded everyday speech before changing the default. This comparison tests recognition of existing files, not live shortcut capture or release-to-paste speed.
+
+[Sanitised measurements, sample IDs and checksums](data/parakeet-comparison-2026-10-17.json) · [Exact commands, scoring and limitations](PARAKEET-BENCHMARK.md). Audio, full transcripts, downloaded models and caches remain outside Git. The comparison uses [LibriSpeech, CC BY 4.0](https://www.openslr.org/12) and [FluidInference's NVIDIA Parakeet conversion, CC BY 4.0](https://huggingface.co/FluidInference/parakeet-tdt-0.6b-v3-coreml/tree/7dd20fe6b1797d35f5e3307e8b1732d9a178edfe).
+
 ## Quiet speech experiment, 12 October 2026
 
 We tested a cheap amplitude boost against the unchanged Turbo recogniser. The independent public JFK recording was used as a clean control, at 5% volume, and at 5% volume with a 1,200 Hz low-pass filter. These are artificial degradations, **not recordings of someone mumbling**.

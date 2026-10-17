@@ -1,0 +1,1758 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-10-17T16:24:08.210Z",
+  "hardware": {
+    "chip": "Apple M2 Max",
+    "memoryBytes": 103079215104,
+    "macOS": "15.5"
+  },
+  "whisper": {
+    "package": "whisper.cpp 1.9.4",
+    "model": "ggml-large-v3-turbo.bin",
+    "modelSha256": "1fc70f774d38eb169993ac391eea357ef47c88757ef72ee5943879b7e8e2bc69",
+    "startupMs": 1980,
+    "firstInferenceMs": 575
+  },
+  "parakeet": {
+    "fluidAudioVersion": "0.17.7",
+    "fluidAudioRevision": "503b4bd1bbf7220882de39fe8ae6716aae4132da",
+    "encoderPrecision": "int8",
+    "loadMs": 333.667208,
+    "model": "FluidInference/parakeet-tdt-0.6b-v3-coreml",
+    "revision": "7dd20fe6b1797d35f5e3307e8b1732d9a178edfe",
+    "type": "ready",
+    "startupMs": 354,
+    "firstInferenceMs": 130,
+    "modelFiles": [
+      {
+        "file": "parakeet-tdt-0.6b-v3/.fluidaudio-revision",
+        "bytes": 41,
+        "sha256": "b4fdd9bc73c3ec27c5f49b25515fc989a43214d78dc2b65e4713e7b2866bfd28"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Decoder.mlmodelc/analytics/coremldata.bin",
+        "bytes": 243,
+        "sha256": "4238c4e81ecd0dc94bd7dfbb60f7e2cc824107c1ffe0387b8607b72833dba350"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Decoder.mlmodelc/coremldata.bin",
+        "bytes": 554,
+        "sha256": "18647af085d87bd8f3121c8a9b4d4564c1ede038dab63d295b4e745cf2d7fb99"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Decoder.mlmodelc/metadata.json",
+        "bytes": 3427,
+        "sha256": "a39e93cd8371b8ded92635c7804fcd0590f0d1dd9415c6d19a0484be073077d9"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Decoder.mlmodelc/model.mil",
+        "bytes": 13110,
+        "sha256": "ef2a0a281695398a62fde86ac269c68f73d5b578d7ed3b31f2ba91a2d1ea1f35"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Decoder.mlmodelc/weights/weight.bin",
+        "bytes": 23604992,
+        "sha256": "48adf0f0d47c406c8253d4f7fef967436a39da14f5a65e66d5a4b407be355d41"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Encoder.mlmodelc/analytics/coremldata.bin",
+        "bytes": 243,
+        "sha256": "42e638870d73f26b332918a3496ce36793fbb413a81cbd3d16ba01328637a105"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Encoder.mlmodelc/coremldata.bin",
+        "bytes": 485,
+        "sha256": "d48034a167a82e88fc3df64f60af963ab3983538271175b8319e7d5720a0fb86"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Encoder.mlmodelc/metadata.json",
+        "bytes": 2921,
+        "sha256": "da24da9cca943fb29d7fa8e376d57fca7cb3aa08ca51b956b0b0e56813f087e9"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Encoder.mlmodelc/model.mil",
+        "bytes": 959769,
+        "sha256": "ed7b19156ca29fa7dfd6891deb9fda4b0e8893f68597c985d135736546a43808"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Encoder.mlmodelc/weights/weight.bin",
+        "bytes": 445187200,
+        "sha256": "e2020f323703477a5b21d7c2d282c403e371afb5962e79877e3033e73ba6f421"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/JointDecisionv3.mlmodelc/analytics/coremldata.bin",
+        "bytes": 243,
+        "sha256": "26def4bf73dd56d29dee21c8ef97cb8969e62f6120ed1adc91e46828e2737b6c"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/JointDecisionv3.mlmodelc/coremldata.bin",
+        "bytes": 521,
+        "sha256": "f5fc08b741400f0088492c9e839418b1e18522f19cba28d361dd030c5f398342"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/JointDecisionv3.mlmodelc/metadata.json",
+        "bytes": 3453,
+        "sha256": "d9307211b9a37e0f0ac260c7660b1571a3de25841035cfdf9b58fd40425f890f"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/JointDecisionv3.mlmodelc/model.mil",
+        "bytes": 11775,
+        "sha256": "be60732943389a047175111a83f8839f3eb39d4803adafa828a0871b2f39818d"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/JointDecisionv3.mlmodelc/weights/weight.bin",
+        "bytes": 12642764,
+        "sha256": "4e0e63d840032f7f07ddb1d64446051166281e5491bf22da8a945c41f6eedb3e"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Preprocessor.mlmodelc/analytics/coremldata.bin",
+        "bytes": 243,
+        "sha256": "c9beeb989c8d66f8be11df59bc6df277ec76cee404f6865b46243835ef562f6d"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Preprocessor.mlmodelc/coremldata.bin",
+        "bytes": 486,
+        "sha256": "dbde3f2300842c1fd51ef3ff948a0bcffe65ffd2dca10707f2509f32c1d65b1d"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Preprocessor.mlmodelc/metadata.json",
+        "bytes": 2841,
+        "sha256": "2a98699e22d279dd37fa1d238aeb1c6db1df0d6fad687775324157689d8f3acf"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Preprocessor.mlmodelc/model.mil",
+        "bytes": 28181,
+        "sha256": "4b8518a956450fec57f06c2a21bdffc26973f7f1fa6842fb38fe917f896b6b93"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/Preprocessor.mlmodelc/weights/weight.bin",
+        "bytes": 491072,
+        "sha256": "129b76e3aeafa8afa3ea76d995b964b145fe83700d579f6ff42c4c38fa0968ea"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/config.json",
+        "bytes": 475,
+        "sha256": "97f19ecccd0fdc730d76fb918090fa8bc64bce8ea4ad43715d5e9c2c7350db66"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/parakeet_v3_vocab.json",
+        "bytes": 151122,
+        "sha256": "7ec60e05f1b24480736ec0eed40900f4626bce1fa9a60fd700ec7e2a59198735"
+      },
+      {
+        "file": "parakeet-tdt-0.6b-v3/parakeet_vocab.json",
+        "bytes": 151122,
+        "sha256": "7ec60e05f1b24480736ec0eed40900f4626bce1fa9a60fd700ec7e2a59198735"
+      }
+    ]
+  },
+  "dataset": {
+    "source": "https://www.openslr.org/12",
+    "license": "CC BY 4.0",
+    "selection": "10 evenly spaced numeric speaker IDs per subset; first numeric utterance lasting 3-15 s; chosen before recognition",
+    "archiveMd5": {
+      "test-clean": "32fa31d27d2e1cad72775fee3f4849a9",
+      "test-other": "fb5a50374b501bb3bac4815ee91d3135"
+    },
+    "samples": [
+      {
+        "id": "61-70968-0000",
+        "subset": "test-clean",
+        "speaker": 61,
+        "durationMs": 4905,
+        "sourceSha256": "fd3c84146d8b357efc7f0d21de86de770721fc5ddac7e6577688dbf3cdabff5b",
+        "wavSha256": "d1a63ff3bdec8df57d498c567b9598d936aac0e57c42692c1ba1192ca5b52472",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-clean.tar.gz"
+      },
+      {
+        "id": "672-122797-0000",
+        "subset": "test-clean",
+        "speaker": 672,
+        "durationMs": 4070,
+        "sourceSha256": "776b1ce553e7ecb2dc0254b2aa4b35af0bde50db65dbf7bdbdfa1560a2c9ec36",
+        "wavSha256": "1c5ef4bf8fe202abf0f943211eb9163c16ccbf71f82c887d48d4a49447a1fd43",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-clean.tar.gz"
+      },
+      {
+        "id": "1221-135766-0000",
+        "subset": "test-clean",
+        "speaker": 1221,
+        "durationMs": 12435,
+        "sourceSha256": "1f6b9ba126dc0f0a3cb813b04e2c970ff9583beeaf8cfaa8f7c8199244aa2514",
+        "wavSha256": "f78495a7cbddd8b1aed566a345956fcacb4956251dc9f4a4a0da94e54b1046b1",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-clean.tar.gz"
+      },
+      {
+        "id": "2094-142345-0001",
+        "subset": "test-clean",
+        "speaker": 2094,
+        "durationMs": 8030,
+        "sourceSha256": "b4fb8a76b5026b1cff5193cba298dc66156f93e228a221a06d26790c34cc049f",
+        "wavSha256": "817b9334f7f88f8b56116fbde7b5acc82a55c9d5b5e5da68e661e2a3ae026df6",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-clean.tar.gz"
+      },
+      {
+        "id": "3570-5694-0000",
+        "subset": "test-clean",
+        "speaker": 3570,
+        "durationMs": 12085,
+        "sourceSha256": "55049eed3f6a821b44b5b8d0e2a7348fc01692fc79981ec56b140ac0f051579e",
+        "wavSha256": "9221350c12774a82e0a93739005f9a3773f33a7661bf162d8fda27f7eddcd1b2",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-clean.tar.gz"
+      },
+      {
+        "id": "4446-2271-0000",
+        "subset": "test-clean",
+        "speaker": 4446,
+        "durationMs": 3495,
+        "sourceSha256": "a557057a06b5042c4f3221db043d570d0f1d1e18c3a8fce01e51248277806996",
+        "wavSha256": "3cd0703e90f036ce898acd4a36ed20c05ca84b7454f8d0bf75594663ffb04aa7",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-clean.tar.gz"
+      },
+      {
+        "id": "5142-33396-0001",
+        "subset": "test-clean",
+        "speaker": 5142,
+        "durationMs": 5020,
+        "sourceSha256": "be7ea6c5995e58166c31b9d2ccb260d5ddb0eed705ec71de0d1787bc3728de13",
+        "wavSha256": "231f935be6924f9401f594493a949146d9aedb88775ee837d3414378fa17cc14",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-clean.tar.gz"
+      },
+      {
+        "id": "6930-75918-0000",
+        "subset": "test-clean",
+        "speaker": 6930,
+        "durationMs": 3505,
+        "sourceSha256": "9ce35224156f071ab58eb7feb8a5ceae600f6f9f353da2a6cbf797b6b1ac8a23",
+        "wavSha256": "fb7da50c0e839fc3b53e4ed0af92bff775ca00602a45ae4cbe3551eb4cca1f5f",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-clean.tar.gz"
+      },
+      {
+        "id": "7729-102255-0000",
+        "subset": "test-clean",
+        "speaker": 7729,
+        "durationMs": 3285,
+        "sourceSha256": "3e143b9c2d525646a0db1f149607f686cb2b7bcaa00aa8732a58aa92a5ab2f76",
+        "wavSha256": "98ebfb3f40c13fe26f0e0f20ea1258031b9e237c7ee25b5da885ae9ffd272958",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-clean.tar.gz"
+      },
+      {
+        "id": "8555-284447-0000",
+        "subset": "test-clean",
+        "speaker": 8555,
+        "durationMs": 9605,
+        "sourceSha256": "0a1e82b860074c25f058e56ae0b1124ddd2fb03971b67d6e994762d7635f4e25",
+        "wavSha256": "9c612dcc33eabf43c4c52dec0fd6776a5097db3db8a0b1bd8058e74836049a20",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-clean.tar.gz"
+      },
+      {
+        "id": "367-130732-0001",
+        "subset": "test-other",
+        "speaker": 367,
+        "durationMs": 4380,
+        "sourceSha256": "74f1f39327ea35b6c21b58e7a86510d414062c3babe5d3f4b19748f68d8a9adf",
+        "wavSha256": "80948e023881982aa1d4542f99bee860696dcaf0bb839e09fb0860859d04e93d",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-other.tar.gz"
+      },
+      {
+        "id": "1998-15444-0000",
+        "subset": "test-other",
+        "speaker": 1998,
+        "durationMs": 13315,
+        "sourceSha256": "a525ac76fdd07fc62b6705ab995e54477bcd622f4edd34334eae8b751fec5ef0",
+        "wavSha256": "9aacd79f4c31f94527db987bad0029edf93ace8f33a017f036fa4ef334649c02",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-other.tar.gz"
+      },
+      {
+        "id": "3005-163389-0000",
+        "subset": "test-other",
+        "speaker": 3005,
+        "durationMs": 8375,
+        "sourceSha256": "4da214d5158037686f547368af42c496f3778b83f7276f99650ea92635eb625c",
+        "wavSha256": "19752b74cc1fd079e0cd1b3683df6f6f2c9d70ecc584592d468f59f7dc47b73e",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-other.tar.gz"
+      },
+      {
+        "id": "3528-168656-0000",
+        "subset": "test-other",
+        "speaker": 3528,
+        "durationMs": 3385,
+        "sourceSha256": "d16413fbfceedaabf37e5081a81a0d635ab470164efcb5774d61fb10131e4278",
+        "wavSha256": "9dccd6f7796451d3860c24c519c9873851dccc916cfea995eb7860786dc9a808",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-other.tar.gz"
+      },
+      {
+        "id": "4198-12259-0000",
+        "subset": "test-other",
+        "speaker": 4198,
+        "durationMs": 5690,
+        "sourceSha256": "f62d4cedd1d66facebc3f1cc2adc244b6fd872092c50f50d45e3a4025eecf6a0",
+        "wavSha256": "703a10cfc426fe71f35843ce25df5743b1509831d9e9c5ed48b95f993750684b",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-other.tar.gz"
+      },
+      {
+        "id": "4852-28311-0001",
+        "subset": "test-other",
+        "speaker": 4852,
+        "durationMs": 4980,
+        "sourceSha256": "2e8ee8719d2f30cc734fd179e95e095581d22904864cfc665b502883897bd66a",
+        "wavSha256": "2cc6f46f987537c6e608f757a406bb39f1f44520bf7f23cf67aeab151585a921",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-other.tar.gz"
+      },
+      {
+        "id": "6070-63485-0000",
+        "subset": "test-other",
+        "speaker": 6070,
+        "durationMs": 9400,
+        "sourceSha256": "54b8ef367b22e31f7a98f767a81fa6f60cab0c338337c2bfca9a923c091b4131",
+        "wavSha256": "32dfc0962f1dcea5527572b2184e979d4710d15fb781adceb8b63117df8a58e7",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-other.tar.gz"
+      },
+      {
+        "id": "6938-70848-0000",
+        "subset": "test-other",
+        "speaker": 6938,
+        "durationMs": 3315,
+        "sourceSha256": "df3b0fd058e3c6b8bd44c3d30ea80ef1aadb06fb699b976f5a2b59e15186d5c1",
+        "wavSha256": "d409bf5d1decd29e505662d5836d77398829d3869b93f0868d3a93b77cc12846",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-other.tar.gz"
+      },
+      {
+        "id": "7975-280057-0000",
+        "subset": "test-other",
+        "speaker": 7975,
+        "durationMs": 4830,
+        "sourceSha256": "88d5ab43f7490df52c4bb3d350556d67606e84704e499317cb899030374ca11f",
+        "wavSha256": "4aac3fe0bf5c6478b400b97e8b08583034d8e245b6cdeac39ca0a4c8d4dd60d3",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-other.tar.gz"
+      },
+      {
+        "id": "8461-258277-0000",
+        "subset": "test-other",
+        "speaker": 8461,
+        "durationMs": 3650,
+        "sourceSha256": "6de1ae040fd3980738425c7228383352a04f8d09f0a9f162325fef5e1b67ad2a",
+        "wavSha256": "472d3aa2a4b2a19f20e20748cff1d4b125ee4403a3b4d44f7396b24c0e73300b",
+        "sourceArchive": "https://openslr.elda.org/resources/12/test-other.tar.gz"
+      }
+    ]
+  },
+  "controlPassed": true,
+  "summary": [
+    {
+      "engine": "whisper-turbo",
+      "subset": "test-clean",
+      "clips": 10,
+      "timingRuns": 30,
+      "wordErrors": 5,
+      "referenceWords": 187,
+      "werPercent": 2.67,
+      "firstWord": 10,
+      "firstThreeWords": 10,
+      "medianMs": 453,
+      "p95Ms": 1121,
+      "maxMs": 1168,
+      "repeatTranscriptsStable": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "subset": "test-other",
+      "clips": 10,
+      "timingRuns": 30,
+      "wordErrors": 3,
+      "referenceWords": 165,
+      "werPercent": 1.82,
+      "firstWord": 9,
+      "firstThreeWords": 9,
+      "medianMs": 400,
+      "p95Ms": 773,
+      "maxMs": 813,
+      "repeatTranscriptsStable": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "subset": "all",
+      "clips": 20,
+      "timingRuns": 60,
+      "wordErrors": 8,
+      "referenceWords": 352,
+      "werPercent": 2.27,
+      "firstWord": 19,
+      "firstThreeWords": 19,
+      "medianMs": 424,
+      "p95Ms": 773,
+      "maxMs": 1168,
+      "repeatTranscriptsStable": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "subset": "test-clean",
+      "clips": 10,
+      "timingRuns": 30,
+      "wordErrors": 6,
+      "referenceWords": 187,
+      "werPercent": 3.21,
+      "firstWord": 10,
+      "firstThreeWords": 10,
+      "medianMs": 117,
+      "p95Ms": 243,
+      "maxMs": 1796,
+      "repeatTranscriptsStable": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "subset": "test-other",
+      "clips": 10,
+      "timingRuns": 30,
+      "wordErrors": 2,
+      "referenceWords": 165,
+      "werPercent": 1.21,
+      "firstWord": 9,
+      "firstThreeWords": 9,
+      "medianMs": 106,
+      "p95Ms": 216,
+      "maxMs": 283,
+      "repeatTranscriptsStable": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "subset": "all",
+      "clips": 20,
+      "timingRuns": 60,
+      "wordErrors": 8,
+      "referenceWords": 352,
+      "werPercent": 2.27,
+      "firstWord": 19,
+      "firstThreeWords": 19,
+      "medianMs": 114,
+      "p95Ms": 227,
+      "maxMs": 1796,
+      "repeatTranscriptsStable": true
+    }
+  ],
+  "rows": [
+    {
+      "engine": "whisper-turbo",
+      "id": "61-70968-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 1121,
+      "wordErrors": 0,
+      "referenceWords": 17,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "61-70968-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 1796,
+      "wordErrors": 0,
+      "referenceWords": 17,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "672-122797-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 151,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "672-122797-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 556,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "1221-135766-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 547,
+      "wordErrors": 0,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "1221-135766-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 227,
+      "wordErrors": 0,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "2094-142345-0001",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 140,
+      "wordErrors": 0,
+      "referenceWords": 21,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "2094-142345-0001",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 542,
+      "wordErrors": 0,
+      "referenceWords": 21,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "3570-5694-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 1168,
+      "wordErrors": 1,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "3570-5694-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 195,
+      "wordErrors": 1,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "4446-2271-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 83,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "4446-2271-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 360,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "5142-33396-0001",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 425,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "5142-33396-0001",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 113,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "6930-75918-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 76,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "6930-75918-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 389,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "7729-102255-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 338,
+      "wordErrors": 2,
+      "referenceWords": 7,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "7729-102255-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 97,
+      "wordErrors": 1,
+      "referenceWords": 7,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "8555-284447-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 152,
+      "wordErrors": 4,
+      "referenceWords": 27,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "8555-284447-0000",
+      "subset": "test-clean",
+      "round": 0,
+      "ms": 477,
+      "wordErrors": 2,
+      "referenceWords": 27,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "367-130732-0001",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 380,
+      "wordErrors": 0,
+      "referenceWords": 12,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "367-130732-0001",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 106,
+      "wordErrors": 0,
+      "referenceWords": 12,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "1998-15444-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 210,
+      "wordErrors": 0,
+      "referenceWords": 42,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "1998-15444-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 553,
+      "wordErrors": 0,
+      "referenceWords": 42,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "3005-163389-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 463,
+      "wordErrors": 1,
+      "referenceWords": 24,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "3005-163389-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 130,
+      "wordErrors": 0,
+      "referenceWords": 24,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "3528-168656-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 71,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "3528-168656-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 345,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "4198-12259-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 344,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "4198-12259-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 91,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "4852-28311-0001",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 97,
+      "wordErrors": 0,
+      "referenceWords": 14,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "4852-28311-0001",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 389,
+      "wordErrors": 0,
+      "referenceWords": 14,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "6070-63485-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 436,
+      "wordErrors": 2,
+      "referenceWords": 21,
+      "firstWord": false,
+      "firstThreeWords": false
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "6070-63485-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 130,
+      "wordErrors": 2,
+      "referenceWords": 21,
+      "firstWord": false,
+      "firstThreeWords": false
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "6938-70848-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 78,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "6938-70848-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 357,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "7975-280057-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 432,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "7975-280057-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 108,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "8461-258277-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 103,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "8461-258277-0000",
+      "subset": "test-other",
+      "round": 0,
+      "ms": 380,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "8461-258277-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 94,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "8461-258277-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 372,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "7975-280057-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 400,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "7975-280057-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 105,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "6938-70848-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 123,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "6938-70848-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 427,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "6070-63485-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 426,
+      "wordErrors": 2,
+      "referenceWords": 21,
+      "firstWord": false,
+      "firstThreeWords": false
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "6070-63485-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 141,
+      "wordErrors": 2,
+      "referenceWords": 21,
+      "firstWord": false,
+      "firstThreeWords": false
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "4852-28311-0001",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 117,
+      "wordErrors": 0,
+      "referenceWords": 14,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "4852-28311-0001",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 403,
+      "wordErrors": 0,
+      "referenceWords": 14,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "4198-12259-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 374,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "4198-12259-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 141,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "3528-168656-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 93,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "3528-168656-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 352,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "3005-163389-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 493,
+      "wordErrors": 1,
+      "referenceWords": 24,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "3005-163389-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 137,
+      "wordErrors": 0,
+      "referenceWords": 24,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "1998-15444-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 199,
+      "wordErrors": 0,
+      "referenceWords": 42,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "1998-15444-0000",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 558,
+      "wordErrors": 0,
+      "referenceWords": 42,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "367-130732-0001",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 381,
+      "wordErrors": 0,
+      "referenceWords": 12,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "367-130732-0001",
+      "subset": "test-other",
+      "round": 1,
+      "ms": 93,
+      "wordErrors": 0,
+      "referenceWords": 12,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "8555-284447-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 152,
+      "wordErrors": 4,
+      "referenceWords": 27,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "8555-284447-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 473,
+      "wordErrors": 2,
+      "referenceWords": 27,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "7729-102255-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 345,
+      "wordErrors": 2,
+      "referenceWords": 7,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "7729-102255-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 85,
+      "wordErrors": 1,
+      "referenceWords": 7,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "6930-75918-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 77,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "6930-75918-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 592,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "5142-33396-0001",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 453,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "5142-33396-0001",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 155,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "4446-2271-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 100,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "4446-2271-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 372,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "3570-5694-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 576,
+      "wordErrors": 1,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "3570-5694-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 206,
+      "wordErrors": 1,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "2094-142345-0001",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 109,
+      "wordErrors": 0,
+      "referenceWords": 21,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "2094-142345-0001",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 545,
+      "wordErrors": 0,
+      "referenceWords": 21,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "1221-135766-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 532,
+      "wordErrors": 0,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "1221-135766-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 187,
+      "wordErrors": 0,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "672-122797-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 88,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "672-122797-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 425,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "61-70968-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 400,
+      "wordErrors": 0,
+      "referenceWords": 17,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "61-70968-0000",
+      "subset": "test-clean",
+      "round": 1,
+      "ms": 103,
+      "wordErrors": 0,
+      "referenceWords": 17,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "61-70968-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 416,
+      "wordErrors": 0,
+      "referenceWords": 17,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "61-70968-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 144,
+      "wordErrors": 0,
+      "referenceWords": 17,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "672-122797-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 91,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "672-122797-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 404,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "1221-135766-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 543,
+      "wordErrors": 0,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "1221-135766-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 191,
+      "wordErrors": 0,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "2094-142345-0001",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 114,
+      "wordErrors": 0,
+      "referenceWords": 21,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "2094-142345-0001",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 453,
+      "wordErrors": 0,
+      "referenceWords": 21,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "3570-5694-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 549,
+      "wordErrors": 1,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "3570-5694-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 243,
+      "wordErrors": 1,
+      "referenceWords": 37,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "4446-2271-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 100,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "4446-2271-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 357,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "5142-33396-0001",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 424,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "5142-33396-0001",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 129,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "6930-75918-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 117,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "6930-75918-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 380,
+      "wordErrors": 0,
+      "referenceWords": 8,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "7729-102255-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 349,
+      "wordErrors": 2,
+      "referenceWords": 7,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "7729-102255-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 93,
+      "wordErrors": 1,
+      "referenceWords": 7,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "8555-284447-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 184,
+      "wordErrors": 4,
+      "referenceWords": 27,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "8555-284447-0000",
+      "subset": "test-clean",
+      "round": 2,
+      "ms": 486,
+      "wordErrors": 2,
+      "referenceWords": 27,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "367-130732-0001",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 374,
+      "wordErrors": 0,
+      "referenceWords": 12,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "367-130732-0001",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 89,
+      "wordErrors": 0,
+      "referenceWords": 12,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "1998-15444-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 210,
+      "wordErrors": 0,
+      "referenceWords": 42,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "1998-15444-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 773,
+      "wordErrors": 0,
+      "referenceWords": 42,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "3005-163389-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 625,
+      "wordErrors": 1,
+      "referenceWords": 24,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "3005-163389-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 216,
+      "wordErrors": 0,
+      "referenceWords": 24,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "3528-168656-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 115,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "3528-168656-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 401,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "4198-12259-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 346,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "4198-12259-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 101,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "4852-28311-0001",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 88,
+      "wordErrors": 0,
+      "referenceWords": 14,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "4852-28311-0001",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 376,
+      "wordErrors": 0,
+      "referenceWords": 14,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "6070-63485-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 416,
+      "wordErrors": 2,
+      "referenceWords": 21,
+      "firstWord": false,
+      "firstThreeWords": false
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "6070-63485-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 102,
+      "wordErrors": 2,
+      "referenceWords": 21,
+      "firstWord": false,
+      "firstThreeWords": false
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "6938-70848-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 67,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "6938-70848-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 345,
+      "wordErrors": 0,
+      "referenceWords": 10,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "7975-280057-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 813,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "7975-280057-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 283,
+      "wordErrors": 0,
+      "referenceWords": 15,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "parakeet-v3",
+      "id": "8461-258277-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 123,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    },
+    {
+      "engine": "whisper-turbo",
+      "id": "8461-258277-0000",
+      "subset": "test-other",
+      "round": 2,
+      "ms": 490,
+      "wordErrors": 0,
+      "referenceWords": 9,
+      "firstWord": true,
+      "firstThreeWords": true
+    }
+  ],
+  "timing": "Warm wall-clock recognizer request including disk read, PCM conversion and IPC/HTTP. Startup and first inference reported separately. Both models resident, serial inference, alternating engine order and reversed clip order in round 2. Three rounds. No capture, speech detection, cues, cleanup or paste. Normal desktop workload; OS caches not flushed, so startup is not cold boot.",
+  "scoring": "Lowercase ASCII words and digits, curly apostrophes normalized; ignore other punctuation. Apostrophes inside contractions retained; hyphens split. No number-format equivalence or synonym correction. WER and first-word results use first round only, not repeated clips as independent evidence. First-word/first-three means exact prefix match.",
+  "limitations": "20 short audiobook utterances from 20 public speakers, selected before recognition. Read speech is not spontaneous dictation, personal names or real mumbling. Common public benchmark data may overlap model training. No physical microphone or beginning-capture verification. Results do not justify a production model switch without representative local user speech."
+}

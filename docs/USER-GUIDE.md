@@ -45,11 +45,13 @@ Paste events cannot prove that every app consumed the text. Very slow or unusual
 ## Choose and check your microphone
 
 0. Connect the microphone you intend to use.
-1. Open **Terry menu → Settings → How you dictate → Microphone**, select it, then **Save settings**.
+1. Open **Terry menu → Microphone** or **Settings → Microphone**, now the first section. Choose your named input. The selection saves immediately. **Change microphone** on the Dictation screen opens the same control.
 2. Choose **Test input** and speak normally. Check the reported device name and that the meter responds to your voice. The test lasts up to ten seconds and does not save or transcribe audio.
 3. Stop the test and dictate into TextEdit. Check that the first and last words survive. A meter proves input activity, not transcription quality.
 
-**System default** follows macOS. A specifically selected microphone must remain connected; Terry reports its loss instead of silently selecting another device. On another Mac, select the microphone again. Device IDs do not transfer reliably.
+**Using** shows the input actually opened. **Last measured input** is historical, not a promise that the mic is connected now. **System default** asks macOS for its default when the stream opens. Select a named input to keep using it. A specifically selected microphone must remain connected; Terry reports its loss instead of silently selecting another device. On another Mac, select the microphone again. Device IDs do not transfer reliably.
+
+With **Keep microphone ready** enabled, an interrupted idle input reconnects automatically with three bounded retries. Reconnecting hardware triggers another attempt. If it remains unavailable, choose **Retry microphone**, or **Allow microphone** when permission is blocked. Permission denial is not retried in a loop. Failed active recordings still need an explicit **Retry audio**; Terry does not silently join audio across a disconnect.
 
 ## Sounds and first words
 
@@ -71,10 +73,20 @@ For voice clips, select a local folder under **Activation sound → Terry voice*
 0. Keep **Local cleanup → Clean up my transcript** off while diagnosing recognition.
 1. Set **Speech engine → Language → English** for English-only speech. Use automatic detection with a multilingual model when appropriate.
 2. In **How you dictate → Vocabulary**, enter a short comma-separated list of correct names and terms. For example: `Alex, Example Studio, TypeScript`. Save. The limit is 1,000 characters.
-3. Repeat the same sentence with the same microphone. Expand **View raw transcription** and compare the words, especially names and numbers. Hints influence recognition; they are not guaranteed replacements or model training. Terry does not learn automatically when you edit pasted text.
+3. Repeat the same sentence with the same microphone. Expand **View raw transcription** and compare the words, especially names and numbers. Hints influence recognition; they are not guaranteed replacements or model training. Use confirmed corrections below for recurring spelling mistakes.
 4. If mistakes persist, follow the [model comparison procedure](BENCHMARKS.md#compare-models-on-your-own-mac). Change one factor at a time.
 
 Missing first words usually need a capture/readiness check. Wrong words in the middle need a model, vocabulary or microphone-quality comparison. Cleanup may improve readability but can change wording; it cannot recover audio that was never captured.
+
+## Teach Terry a correction
+
+0. Finish a dictation, then open **Terry menu → Open Terry Tibbs → Dictation**.
+1. Under **Latest transcript**, choose **Correct words**. Edit the mistaken words in **Corrected transcript**.
+2. Choose **Review word changes**. Tick only replacements you want in future dictations, then **Remember selected corrections**. Punctuation, deletions and broad rewrites are not learned.
+3. Dictate the term again. Check the corrected text in **Latest transcript**, then **View raw transcription** for what Whisper originally heard. Saving a correction does not paste again or overwrite your clipboard. **Copy transcript** copies the edited version if wanted.
+4. In **Settings → Saved corrections**, add a specific pair, remove a pair or turn off **Apply saved corrections**, then **Save settings**. An empty list means no replacements are applied.
+
+Corrections are literal, case-insensitive whole-word or phrase replacements, with longer phrases taking priority. They do not cascade. Only confirm changes you want every time. Up to 200 pairs are saved in the local settings file; no extra speech or language model runs, and no cloud service is contacted. Terry does not watch edits in other apps. This is a personal replacement dictionary, not speech-model training.
 
 ## When something goes wrong
 

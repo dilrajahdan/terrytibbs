@@ -3,6 +3,7 @@ import { basename, isAbsolute, join } from 'node:path'
 import type { Settings } from '../shared/types'
 import { MODEL_NAME } from './model'
 import { parseShortcut } from '../shared/shortcut'
+import { validateCorrections } from '../shared/corrections'
 
 export function engineExists(path: string): boolean {
   try { accessSync(path, constants.X_OK); return statSync(path).isFile() } catch { return false }
@@ -15,7 +16,7 @@ export function defaultSettings(userData: string): Settings {
   return {
     whisperPath: paths.find(engineExists) || paths[0],
     modelPath: join(userData, 'models', MODEL_NAME),
-    shortcut: 'Alt+Space', language: 'en', vocabulary: '', autoPaste: true, muteOtherAudio: true, keepMicrophoneReady: false,
+    shortcut: 'Alt+Space', language: 'en', vocabulary: '', correctionsEnabled: true, corrections: [], autoPaste: true, muteOtherAudio: true, keepMicrophoneReady: false,
     cleanupEnabled: false, cleanupModel: '', activationSound: 'off', activationSoundDirectory: '', activationSoundClip: '', microphoneId: '', microphoneLabel: ''
   }
 }
@@ -27,6 +28,9 @@ export function validateSettings(value: unknown): Settings {
   }
   if (!isAbsolute(s.whisperPath) || !isAbsolute(s.modelPath) || s.whisperPath.length > 4096 || s.modelPath.length > 4096) throw new Error('Choose absolute engine and model file paths.')
   const shortcut = parseShortcut(s.shortcut).value
+  const corrections = validateCorrections(s.corrections ?? [])
+  const correctionsEnabled = s.correctionsEnabled ?? true
+  if (typeof correctionsEnabled !== 'boolean') throw new Error('Invalid corrections setting.')
   const keepMicrophoneReady = s.keepMicrophoneReady ?? false
   if (typeof keepMicrophoneReady !== 'boolean') throw new Error('Invalid microphone readiness setting.')
   const muteOtherAudio = s.muteOtherAudio ?? true
@@ -46,7 +50,7 @@ export function validateSettings(value: unknown): Settings {
   if (s.cleanupModel.length > 200 || /cloud/i.test(s.cleanupModel)) throw new Error('Choose a local Ollama model.')
   if (typeof s.autoPaste !== 'boolean' || typeof s.cleanupEnabled !== 'boolean') throw new Error('Invalid settings switches.')
   if (s.cleanupEnabled && !s.cleanupModel.trim()) throw new Error('Choose an installed local cleanup model first.')
-  return { whisperPath: s.whisperPath, modelPath: s.modelPath, shortcut, language: s.language, vocabulary: s.vocabulary.trim(), autoPaste: s.autoPaste, muteOtherAudio, keepMicrophoneReady, cleanupEnabled: s.cleanupEnabled, cleanupModel: s.cleanupModel.trim(), activationSound, activationSoundDirectory, activationSoundClip, microphoneId, microphoneLabel }
+  return { whisperPath: s.whisperPath, modelPath: s.modelPath, shortcut, language: s.language, vocabulary: s.vocabulary.trim(), corrections, correctionsEnabled, autoPaste: s.autoPaste, muteOtherAudio, keepMicrophoneReady, cleanupEnabled: s.cleanupEnabled, cleanupModel: s.cleanupModel.trim(), activationSound, activationSoundDirectory, activationSoundClip, microphoneId, microphoneLabel }
 }
 export function loadSettings(userData: string): Settings {
   const defaults = defaultSettings(userData)

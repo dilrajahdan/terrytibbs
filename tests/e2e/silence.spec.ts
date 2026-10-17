@@ -1,4 +1,5 @@
-import { test, expect, _electron as electron } from '@playwright/test'
+import { isolatedElectron as electron } from './isolation'
+import { test, expect } from '@playwright/test'
 import { mkdtemp, readFile, writeFile, rm, mkdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
@@ -8,13 +9,9 @@ test('speech control, silent held and locked attempts, idle edges and recovery p
   const directory=await mkdtemp(join(tmpdir(),'terry-silence-e2e-'))
   const helper=join(directory,'helper.cjs'), log=join(directory,'paste-events')
   await mkdir('artifacts',{recursive:true});await writeFile(log,'')
-  await writeFile(helper,`#!${process.execPath}\nconst fs=require('node:fs');if(process.argv[2]==='frontmost')console.log(JSON.stringify({trusted:true,pid:111,name:'Owned test editor',bundleId:'dev.terry.test-editor',editable:true,focus:'editable'}));else if(process.argv[2]==='paste'){fs.appendFileSync(${JSON.stringify(log)},'paste\\n');console.log('{"ok":true}')}\n`,{mode:0o700})
+  await writeFile(helper,`#!${process.execPath}\nconst fs=require('node:fs');if(process.argv[2]==='frontmost')console.log(JSON.stringify({trusted:true,pid:111,name:'Owned test editor',bundleId:'dev.terry.test-editor',editable:true,focus:'editable'}));else if(process.argv[2]==='paste-preserving'){fs.appendFileSync(${JSON.stringify(log)},'paste\\n');console.log('{"ok":true}')}\n`,{mode:0o700})
   await writeFile(join(directory,'settings.json'),JSON.stringify({...defaultSettings(directory),modelPath:process.env.TERRY_TEST_MODEL||resolve('artifacts/ggml-tiny.en.bin'),vocabulary:'Alex, Example Studio, Terry Tibbs, Wispr Flow, Codex',autoPaste:true,muteOtherAudio:false,activationSound:'off'}))
   const app=await electron.launch({args:['.'],env:{...process.env,TERRY_E2E:'1',TERRY_USER_DATA:directory,TERRY_E2E_NATIVE_HELPER:helper}})
-  // Preserve every clipboard format, not only text, while running the isolated test.
-  await app.evaluate(async ({clipboard, ClipboardItem})=>{
-    (globalThis as any).__savedClipboard = await Promise.all((await clipboard.read()).map(async item=>new ClipboardItem(Object.fromEntries(await Promise.all(item.types.map(async type=>[type,await item.getType(type)]))))))
-  })
   try {
     await expect.poll(()=>app.windows().filter(p=>p.url().includes('index.html')&&!p.url().endsWith('#hud')).length).toBe(1)
     const page=app.windows().find(p=>p.url().includes('index.html')&&!p.url().endsWith('#hud'))!
@@ -43,7 +40,7 @@ test('speech control, silent held and locked attempts, idle edges and recovery p
     expect(previous?.text).toMatch(/fellow Americans/i);expect(previous?.text).toMatch(/country[.!]?$/i)
     expect(await pasteCount()).toBe(1)
     const content=await app.evaluate(({clipboard})=>clipboard.readText())
-    expect(content).toBe(previous?.text)
+    expect(content).toBe('') // Mock delivery leaves the isolated clipboard intact.
     // Idle / unmatched releases must not open a microphone or copy again.
     const captureCount=await page.evaluate(()=>(window as any).__captures)
     await edge('up');await edge('up');await page.waitForTimeout(500)
@@ -93,7 +90,6 @@ test('speech control, silent held and locked attempts, idle edges and recovery p
     expect((await state()).delivery).toBe('none')
     await expect(hud.locator('.hud-result')).toHaveText('No speech')
   } finally {
-    try { await app.evaluate(async ({clipboard})=>{await clipboard.write((globalThis as any).__savedClipboard)}) }
-    finally { await app.close();await rm(directory,{recursive:true,force:true}) }
+    await app.close();await rm(directory,{recursive:true,force:true})
   }
 })

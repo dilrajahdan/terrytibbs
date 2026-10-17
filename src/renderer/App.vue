@@ -53,14 +53,15 @@
             <p class="phase-message">{{ !canRecord && !busy && state.phase !== 'error' ? 'Choose your local speech engine and model in Settings.' : (state.message || phaseDescription) }}</p>
           </div>
 
-          <div v-if="state.inputDevice || state.inputWarning" class="dictation-input" :class="{ warning: state.inputWarning }" role="status">
+          <div class="dictation-input" :class="{ warning: state.inputWarning }" role="status">
             <span aria-hidden="true">{{ state.inputWarning ? '!' : '●' }}</span>
             <span>
-              <strong v-if="state.inputDevice">Input: {{ state.inputDevice.label || 'Unnamed microphone' }}</strong>
-              <small v-if="state.inputDevice">{{ formatSampleRate(state.inputDevice.sampleRate) }}</small>
+              <strong>Selected: {{ state.settings.microphoneLabel || 'System default' }}</strong>
+              <small v-if="state.inputDevice">{{ state.microphoneReady || state.phase === 'recording' ? 'Using' : 'Last input' }}: {{ state.inputDevice.label || 'Unnamed microphone' }}</small>
               <small v-if="state.settings.keepMicrophoneReady && !busy">{{ state.microphoneReady ? 'Microphone ready for instant starts' : state.microphonePreparation || 'Preparing microphone…' }}</small>
               <small v-if="state.inputWarning">{{ state.inputWarning }}</small>
             </span>
+            <button class="text-button" type="button" @click="openMicrophone">Change microphone</button>
           </div>
 
           <div class="primary-actions">
@@ -136,6 +137,8 @@
         @download-model="run('downloadModel')"
         @permission="openPermission"
         @refresh="run('refresh')"
+        @microphone="selectMicrophone"
+        @retry-microphone="retryMicrophone"
       />
     </template>
 
@@ -152,6 +155,9 @@ import { formatShortcut, shortcutFromKeyboardEvent } from '../shared/shortcut'
 import type { ShortcutKeyboardEvent } from '../shared/shortcut'
 import type { AppState, Settings, SoundClip } from '../shared/types'
 import MicrophoneSettings from './components/MicrophoneSettings.vue'
+import CorrectionLearner from './components/CorrectionLearner.vue'
+import CorrectionSettings from './components/CorrectionSettings.vue'
+import type { Correction } from '../shared/types'
 import { createCaptureController } from './recorder'
 
 const isHud = window.location.hash === '#hud' || window.location.hash === '#/hud'
@@ -202,6 +208,21 @@ function syncMicrophonePreparation(): void {
 }
 function suspendMicrophonePreparation(): void { inputTestOwnsMicrophone = true; captureController?.suspend() }
 function resumeMicrophonePreparation(): void { inputTestOwnsMicrophone = false; syncMicrophonePreparation() }
+function microphoneDevicesChanged(): void { captureController?.devicesChanged() }
+async function retryMicrophone(): Promise<void> {
+  if (inputTestOwnsMicrophone) {
+    window.dispatchEvent(new Event('terry-stop-input-test'))
+    await nextTick()
+  }
+  if (!captureController?.retryPreparation()) actionError.value = 'The microphone is already preparing. Wait for its status, or check Microphone permission below.'
+}
+
+async function selectMicrophone(deviceId: string, label: string): Promise<void> {
+  saving.value = true; actionError.value = ''
+  try { await window.terry.selectMicrophone(deviceId, label) }
+  catch (error) { actionError.value = friendlyError(error, 'The microphone could not be saved.') }
+  finally { saving.value = false }
+}
 
 async function refreshState(): Promise<void> {
   loadError.value = ''
@@ -232,7 +253,7 @@ async function chooseFile(kind: 'engine' | 'model'): Promise<void> {
 async function saveSettings(settings: Settings): Promise<void> {
   saving.value = true
   actionError.value = ''
-  try { await window.terry.saveSettings(settings) }
+  try { await window.terry.saveSettings(JSON.parse(JSON.stringify(settings))) }
   catch (error) { actionError.value = friendlyError(error, 'Settings could not be saved.') }
   finally { saving.value = false }
 }
@@ -243,6 +264,11 @@ async function openPermission(kind: 'microphone' | 'accessibility'): Promise<voi
 }
 
 function openSettings(): void { tab.value = 'settings' }
+async function openMicrophone(): Promise<void> {
+  tab.value = 'settings'
+  await nextTick()
+  document.getElementById('microphoneId')?.focus()
+}
 async function hideWindow(): Promise<void> {
   actionError.value = ''
   window.dispatchEvent(new Event('terry-before-hide'))
@@ -264,6 +290,7 @@ onMounted(async () => {
     captureController = createCaptureController(window.terry)
     window.addEventListener('terry-before-input-test', suspendMicrophonePreparation)
     window.addEventListener('terry-after-input-test', resumeMicrophonePreparation)
+    navigator.mediaDevices?.addEventListener('devicechange', microphoneDevicesChanged)
     unsubscribeCapture = window.terry.onCapture((command) => {
       if (command.action === 'start') {
         window.dispatchEvent(new Event('terry-before-capture'))
@@ -279,9 +306,9 @@ onMounted(async () => {
     })
     unsubscribeOpenSettings = window.terry.onOpenSettings(async target => {
       tab.value = 'settings'
-      if (target === 'shortcut') {
+      if (target === 'shortcut' || target === 'microphone') {
         await nextTick()
-        const input = document.getElementById('shortcut')
+        const input = document.getElementById(target === 'shortcut' ? 'shortcut' : 'microphoneId')
         input?.scrollIntoView({ block: 'center' })
         input?.focus({ preventScroll: true })
       }
@@ -301,6 +328,7 @@ onBeforeUnmount(() => {
   captureController?.destroy()
   window.removeEventListener('terry-before-input-test', suspendMicrophonePreparation)
   window.removeEventListener('terry-after-input-test', resumeMicrophonePreparation)
+  navigator.mediaDevices?.removeEventListener('devicechange', microphoneDevicesChanged)
   if (clock !== undefined) window.clearInterval(clock)
   document.documentElement.classList.remove('hud-root')
   document.body.classList.remove('hud-body')
@@ -336,6 +364,7 @@ const TranscriptCard = defineComponent({
     h('div', { class: 'transcript-meta mono' }, [h('span', `Audio ${formatDuration(transcript.durationMs)}`), h('span', `Processed ${(transcript.processingMs / 1000).toFixed(1)}s`)]),
     transcript.deliveryMessage ? h('p', { class: 'transcript-delivery', role: 'status' }, transcript.deliveryMessage) : null,
     h('div', { class: 'inline-actions' }, [h('button', { class: 'button small', type: 'button', onClick: () => emit('copy', false) }, 'Copy transcript'), h('button', { class: 'button small secondary', type: 'button', onClick: () => emit('copy', true) }, 'Copy raw'), props.state.canRetry ? h('button', { class: 'button small ghost', type: 'button', onClick: () => emit('retry') }, 'Retry') : null]),
+    h(CorrectionLearner, { transcript, enabled: props.state.settings.correctionsEnabled, busy: !['ready', 'error'].includes(props.state.phase) }),
     h('details', [h('summary', 'View raw transcription'), h('p', transcript.raw)])
   ]) } }
 })
@@ -512,7 +541,7 @@ const ShortcutRecorder = defineComponent({
 })
 
 const SettingsPanel = defineComponent({
-  props: { state: { type: Object as () => AppState, required: true }, saving: { type: Boolean, required: true } }, emits: ['save', 'download-model', 'permission', 'refresh'],
+  props: { state: { type: Object as () => AppState, required: true }, saving: { type: Boolean, required: true } }, emits: ['save', 'download-model', 'permission', 'refresh', 'microphone', 'retry-microphone'],
   setup(props, { emit }) {
     const draft = reactive<Settings>({ ...props.state.settings })
     const fileError = ref('')
@@ -526,7 +555,7 @@ const SettingsPanel = defineComponent({
       clipsError.value = ''
       if (!draft.activationSoundDirectory) return
       clipsLoading.value = true
-      try { soundClips.value = await window.terry.listSoundClips({ ...draft }) }
+      try { soundClips.value = await window.terry.listSoundClips(JSON.parse(JSON.stringify(draft))) }
       catch (error) { clipsError.value = friendlyError(error, 'Voice clips could not be listed. Check the selected folder.') }
       finally { clipsLoading.value = false }
     }
@@ -534,14 +563,18 @@ const SettingsPanel = defineComponent({
       window.dispatchEvent(new Event('terry-stop-input-test'))
       previewing.value = true
       soundMessage.value = ''
-      try { const result = await window.terry.previewSound({ ...draft }); soundMessage.value = result.warning || (result.played ? 'Preview finished. Recording has not started.' : '') }
+      try { const result = await window.terry.previewSound(JSON.parse(JSON.stringify(draft))); soundMessage.value = result.warning || (result.played ? 'Preview finished. Recording has not started.' : '') }
       catch (error) { soundMessage.value = friendlyError(error, 'The sound could not be played.') }
       finally { previewing.value = false }
     }
     const shortcutRecorderActive = ref(false)
     watch(() => settingsSignature(props.state.settings), (signature, previousSignature) => {
       if (signature !== previousSignature) {
-        Object.assign(draft, props.state.settings)
+        // An immediate microphone change must not discard other unsaved fields.
+        const old = previousSignature ? JSON.parse(previousSignature) as Settings : props.state.settings
+        for (const key of Object.keys(props.state.settings) as Array<keyof Settings>) {
+          if (JSON.stringify(props.state.settings[key]) !== JSON.stringify(old[key])) Object.assign(draft, { [key]: props.state.settings[key] })
+        }
         void loadSoundClips()
       }
     })
@@ -566,6 +599,12 @@ const SettingsPanel = defineComponent({
       h('div', { class: 'settings-intro' }, [h('p', { class: 'eyebrow' }, 'Make it yours'), h('h1', 'Settings'), h('p', { class: 'lede' }, 'All paths and preferences stay on this Mac.')]),
       h('form', { class: 'settings-form', onSubmit: (event: Event) => { event.preventDefault(); if (!shortcutRecorderActive.value) { window.dispatchEvent(new Event('terry-stop-input-test')); emit('save', { ...draft }) } } }, [
         fileError.value ? h('p', { class: 'notice error', role: 'alert' }, fileError.value) : null,
+        h('section', { class: 'settings-section microphone-section' }, [h('div', [h('h2', 'Microphone'), h('p', 'Choose the mic in front of you. Your selection is saved immediately.')]), h('div', { class: 'fields' }, [
+          h(MicrophoneSettings, { settings: props.state.settings, inputDevice: props.state.inputDevice, inputWarning: props.state.inputWarning, preparation: props.state.microphonePreparation, prepared: props.state.microphoneReady && props.state.settings.keepMicrophoneReady, saving: props.saving, phase: props.state.phase, busy: !['ready', 'error'].includes(props.state.phase), onUpdate: (deviceId: string, label: string) => emit('microphone', deviceId, label) }),
+          toggle('keepMicrophoneReady', 'Keep microphone ready', 'Faster starts. Keeps the mic active with the latest half-second in memory. Pauses on lock or sleep. Save settings to apply.', () => draft.keepMicrophoneReady, value => draft.keepMicrophoneReady = value),
+          h('p', { role: 'status' }, props.state.microphonePreparation || (draft.keepMicrophoneReady ? 'Save to prepare the microphone.' : 'Microphone opens when you press the shortcut.')),
+          props.state.settings.keepMicrophoneReady && !props.state.microphoneReady ? h('button', { class: 'button secondary small', type: 'button', disabled: !['ready', 'error'].includes(props.state.phase) || props.state.inputSuspended, onClick: () => ['granted', 'test device'].includes(props.state.microphone) ? emit('retry-microphone') : emit('permission', 'microphone') }, ['granted', 'test device'].includes(props.state.microphone) ? 'Retry microphone' : 'Allow microphone') : null
+        ])]),
         h('section', { class: 'settings-section' }, [h('div', [h('span', { class: 'section-number' }, '01'), h('h2', 'Speech engine'), h('p', 'Point Terry at your local whisper.cpp command and model.')]), h('div', { class: 'fields' }, [
           field('Whisper command', h('div', { class: 'path-row' }, [h('input', { id: 'whisperPath', value: draft.whisperPath, readonly: true, placeholder: 'Choose whisper-cli…' }), h('button', { class: 'button secondary', type: 'button', onClick: () => void pickFile('engine') }, 'Choose')]), props.state.engineReady ? 'Engine ready.' : 'Required before recording.', 'whisperPath'),
           field('Model file', h('div', { class: 'path-row' }, [h('input', { id: 'modelPath', value: draft.modelPath, readonly: true, placeholder: 'Choose a .bin model…' }), h('button', { class: 'button secondary', type: 'button', onClick: () => void pickFile('model') }, 'Choose')]), props.state.modelReady ? 'Model ready.' : 'Large v3 Turbo is recommended.', 'modelPath'),
@@ -574,9 +613,6 @@ const SettingsPanel = defineComponent({
         ])]),
         h('section', { class: 'settings-section' }, [h('div', [h('span', { class: 'section-number' }, '02'), h('h2', 'How you dictate'), h('p', 'Hold your shortcut to talk. Release to finish, or double-tap to lock the microphone on. The start button begins a locked recording.')]), h('div', { class: 'fields' }, [
           field('Global shortcut', h(ShortcutRecorder, { modelValue: draft.shortcut, 'onUpdate:modelValue': (value: string) => { draft.shortcut = value }, onRecordingState: (active: boolean) => { shortcutRecorderActive.value = active } }), props.state.shortcutReady ? 'Record a real key or combination, then save. You can also type the shortcut.' : 'Shortcut listener is not ready. Allow Accessibility access, then check permissions again.', 'shortcut'),
-          h(MicrophoneSettings, { settings: draft, inputDevice: props.state.inputDevice, inputWarning: props.state.inputWarning, prepared: props.state.microphoneReady && props.state.settings.keepMicrophoneReady, phase: props.state.phase, busy: ['starting', 'recording', 'transcribing', 'cleaning'].includes(props.state.phase), onUpdate: (deviceId: string, label: string) => { draft.microphoneId = deviceId; draft.microphoneLabel = label } }),
-          toggle('keepMicrophoneReady', 'Keep microphone ready', 'Faster starts. Keeps the mic active with the latest half-second in memory, included when dictation starts. Pauses on lock or sleep.', () => draft.keepMicrophoneReady, value => draft.keepMicrophoneReady = value),
-          h('p', { role: 'status' }, props.state.microphonePreparation || (draft.keepMicrophoneReady ? 'Save to prepare the microphone.' : 'Microphone opens when you press the shortcut.')),
           toggle('muteOtherAudio', 'Mute other audio while dictating', 'Terry’s clip still plays. Other audio returns when recording ends.', () => draft.muteOtherAudio, value => draft.muteOtherAudio = value),
           field('Activation sound', h('select', { id: 'activationSound', value: draft.activationSound, onChange: (event: Event) => { draft.activationSound = (event.target as HTMLSelectElement).value as Settings['activationSound']; soundMessage.value = ''; if (draft.activationSound === 'clips') void loadSoundClips() } }, [h('option', { value: 'off' }, 'Off'), h('option', { value: 'buzz' }, 'Quick buzz'), h('option', { value: 'chime' }, 'Mac chime'), h('option', { value: 'clips' }, 'Terry voice')]), draft.activationSound === 'buzz' || draft.activationSound === 'off' ? 'Capture starts with your shortcut. The short buzz does not hold up recording.' : 'Voice clips and Mac chime delay recording until playback finishes. Choose Quick buzz for a fast start.'),
           draft.activationSound === 'clips' ? field('Voice clips folder', h('div', { class: 'path-row' }, [h('input', { id: 'activationSoundDirectory', value: draft.activationSoundDirectory, readonly: true, placeholder: 'Choose your clips folder…' }), h('button', { class: 'button secondary', type: 'button', onClick: () => void pickFile('sounds') }, 'Choose folder…')]), 'One clip per activation, in filename order. MP3, WAV, M4A, AIFF or CAF.', 'activationSoundDirectory') : null,
@@ -584,6 +620,9 @@ const SettingsPanel = defineComponent({
           draft.activationSound !== 'off' ? h('div', { class: 'sound-preview' }, [h('button', { class: 'button secondary small', type: 'button', disabled: previewing.value || clipsLoading.value || (draft.activationSound === 'clips' && !draft.activationSoundDirectory) || ['starting', 'recording', 'transcribing', 'cleaning'].includes(props.state.phase), onClick: () => void previewSound() }, previewing.value ? 'Playing…' : previewLabel()), soundMessage.value ? h('small', { role: 'status' }, soundMessage.value) : null]) : null,
           field('Vocabulary', h('textarea', { id: 'vocabulary', value: draft.vocabulary, rows: 4, placeholder: 'Alex, Example Studio, product names…', onInput: (event: Event) => draft.vocabulary = (event.target as HTMLTextAreaElement).value }), 'Comma-separated words and phrases Whisper should expect.'),
           toggle('autoPaste', 'Paste automatically', 'Paste only when the app you started in is still focused.', () => draft.autoPaste, (value) => draft.autoPaste = value)
+        ])]),
+        h('section', { class: 'settings-section' }, [h('div', [h('h2', 'Saved corrections'), h('p', 'Remember the words you repeatedly fix.')]), h('div', { class: 'fields' }, [
+          h(CorrectionSettings, { rules: draft.corrections, enabled: draft.correctionsEnabled, onUpdate: (rules: Correction[]) => draft.corrections = rules, onEnabled: (enabled: boolean) => draft.correctionsEnabled = enabled })
         ])]),
         h('section', { class: 'settings-section' }, [h('div', [h('span', { class: 'section-number' }, '03'), h('h2', 'Local cleanup'), h('p', 'Optionally tidy punctuation with Ollama on this Mac.')]), h('div', { class: 'fields' }, [
           toggle('cleanupEnabled', 'Clean up my transcript', 'Raw text is always kept if cleanup fails.', () => draft.cleanupEnabled, (value) => draft.cleanupEnabled = value),
@@ -595,7 +634,7 @@ const SettingsPanel = defineComponent({
           h('div', { class: 'permission-row' }, [h('span', { class: ['check', { done: props.state.shortcutReady }] }, props.state.shortcutReady ? '✓' : '!'), h('div', [h('strong', 'Keyboard shortcut'), h('small', props.state.shortcutReady ? 'Listening in the menu bar' : 'Not ready. Review Accessibility, then check again.')])]),
           h('button', { class: 'text-button align-left', type: 'button', onClick: () => emit('refresh') }, 'Check permissions again →')
         ])]),
-        h('div', { class: 'save-bar' }, [h('p', shortcutRecorderActive.value ? 'Use or cancel the recorded shortcut before saving.' : (props.state.message || 'Closing this window keeps Terry available from the TT menu-bar icon.')), h('button', { class: 'button primary', type: 'submit', disabled: props.saving || shortcutRecorderActive.value }, props.saving ? 'Saving…' : 'Save settings')])
+        h('div', { class: 'save-bar' }, [h('p', shortcutRecorderActive.value ? 'Use or cancel the recorded shortcut before saving.' : (props.state.message || 'Closing this window keeps Terry available from the microphone menu-bar icon.')), h('button', { class: 'button primary', type: 'submit', disabled: props.saving || shortcutRecorderActive.value }, props.saving ? 'Saving…' : 'Save settings')])
       ])
     ])
   }
@@ -649,7 +688,7 @@ const HudView = defineComponent({
 function field(label: string, control: ReturnType<typeof h>, help = '', explicitId?: string) { const id = explicitId || control.props?.id as string | undefined; return h('div', { class: 'field' }, [h('label', { for: id }, label), control, help ? h('small', help) : null]) }
 function toggle(id: string, label: string, help: string, get: () => boolean, set: (value: boolean) => void) { return h('label', { class: 'toggle', for: id }, [h('input', { id, type: 'checkbox', checked: get(), onChange: (event: Event) => set((event.target as HTMLInputElement).checked) }), h('span', { class: 'toggle-track', 'aria-hidden': 'true' }), h('span', [h('strong', label), h('small', help)])]) }
 function permissionRow(label: string, detail: string, ready: boolean, open: () => void) { return h('div', { class: 'permission-row' }, [h('span', { class: ['check', { done: ready }] }, ready ? '✓' : '!'), h('div', [h('strong', label), h('small', detail)]), h('button', { class: 'button secondary small', type: 'button', onClick: open }, ready ? 'Review' : 'Open settings')]) }
-function settingsSignature(settings: Settings): string { return JSON.stringify([settings.whisperPath, settings.modelPath, settings.shortcut, settings.language, settings.vocabulary, settings.autoPaste, settings.muteOtherAudio, settings.keepMicrophoneReady, settings.cleanupEnabled, settings.cleanupModel, settings.activationSound, settings.activationSoundDirectory, settings.activationSoundClip, settings.microphoneId, settings.microphoneLabel]) }
+function settingsSignature(settings: Settings): string { return JSON.stringify(settings) }
 </script>
 
 <style src="./styles/main.css"></style>

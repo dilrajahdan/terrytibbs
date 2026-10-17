@@ -1,4 +1,5 @@
-import { test, expect, _electron as electron, type Page, type ElectronApplication } from '@playwright/test'
+import { isolatedElectron as electron } from './isolation'
+import { test, expect, type Page, type ElectronApplication } from '@playwright/test'
 import { mkdtemp, mkdir, readFile, writeFile, rm, chmod } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { resolve, join } from 'node:path'

@@ -9,3 +9,5 @@ Executing worktree: `terrytibbs-worktrees/local-accuracy`, 17 October 2026.
 5. Update user documentation, changelog, GitHub and the preview installer after verification. Keep unsigned-preview and physical-device boundaries explicit.
 
 Constraints: no cloud audio/text upload, no silent model switch, no latency claims from throughput alone, no personal recordings/settings in Git, no private development history. Test app data and pasteboard must be isolated from daily use.
+
+Verification on 17 October: 112 unit checks and all 11 app regression tests passed. Native Turbo speech-to-paste passed for hold and lock with clipboard restoration. Mounted ARM64 0.6.7 installed and named USB input opened in the real UI. Parakeet comparison is published as benchmark evidence only; equal strict accuracy on the sample does not justify changing the default. See `docs/RELEASE.md` for remaining physical-device and fresh-Mac boundaries.
