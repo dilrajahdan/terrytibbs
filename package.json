@@ -1,6 +1,6 @@
 {
   "name": "terrytibbs",
-  "version": "0.6.7",
+  "version": "0.6.8",
   "description": "Local voice dictation for macOS. Talk, tidy, paste.",
   "main": "out/main/index.js",
   "author": "Terry Tibbs contributors",
@@ -44,6 +44,11 @@
       "package.json"
     ],
     "extraResources": [
+      {
+        "from": "resources/tray",
+        "to": "tray",
+        "filter": ["*.png"]
+      },
       {
         "from": "build/terry-native",
         "to": "terry-native"

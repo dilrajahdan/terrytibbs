@@ -25,7 +25,7 @@ No account. No subscription. Dictation works offline after the first setup and m
 | Finish a locked recording | **Press once more.** |
 | Cancel | Press **Escape**. |
 | Get Terry out of the way | **Close to menu bar**. It keeps running. |
-| Open it again | Click the **microphone icon** in the Mac menu bar. |
+| Open it again | Click the **TT + microphone icon** in the Mac menu bar. |
 | Stop Terry completely | Menu bar → **Quit Terry Tibbs**. |
 
 **Says “Copied only”?** Click your text box and press **⌘V**. Your text is on the clipboard. For automatic paste, enable Accessibility and keep the original app focused. Password fields and some apps cannot accept automatic paste.
@@ -34,7 +34,7 @@ No account. No subscription. Dictation works offline after the first setup and m
 
 ## Install
 
-**[Download the 0.6.7 Mac preview](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.7)** · [Changelog](CHANGELOG.md)
+**[Download the 0.6.8 Mac preview](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.8)** · [Changelog](CHANGELOG.md)
 
 The DMG saves you building the app. It is unsigned and unnotarised, and needs Homebrew whisper.cpp plus a model. **[DMG installation steps →](docs/INSTALL.md#dmg-preview-installation)**
 
@@ -49,7 +49,7 @@ Prefer building from source?
    npm run install:mac
    ```
 
-2. Terry installs into **~/Applications** and opens. Grant permissions and choose your shortcut. Check the microphone icon appears in the menu bar.
+2. Terry installs into **~/Applications** and opens. Grant permissions and choose your shortcut. Check the TT + microphone icon appears in the menu bar.
 
 The install command downloads the **1.62 GB Whisper Turbo model**. It refuses to overwrite an existing app. **On an 8 GB Mac, use the [smaller-model installation](docs/INSTALL.md#macbook-neo-use-a-smaller-model-first) instead.** This is one install command after prerequisites and cloning, not a zero-setup installer.
 

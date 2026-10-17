@@ -375,7 +375,7 @@ function updateTray() {
   if (signature === traySignature) return
   traySignature = signature
   const activity = state.phase === 'recording' ? (state.recordingMode === 'locked' ? '▣' : '●') : isBusy() ? '···' : ''
-  // Keep a usable menu if a future macOS build cannot resolve the system symbol.
+  // Keep a usable text menu if the bundled image cannot be loaded.
   tray.setTitle([trayIconAvailable ? '' : 'TT', activity].filter(Boolean).join(' '))
   tray.setToolTip(`Terry Tibbs: ${state.phase}${state.recordingMode === 'locked' ? ', locked' : ''}. ${formatShortcut(state.settings.shortcut)}`)
   trayMenu = Menu.buildFromTemplate([
@@ -587,8 +587,11 @@ else {
     powerMonitor.on('suspend', () => { systemSuspended = true; cancelForSystemPause() })
     powerMonitor.on('unlock-screen', () => { screenLocked = false; if (!systemSuspended) setState({ inputSuspended: false }) })
     powerMonitor.on('resume', () => { systemSuspended = false; if (!screenLocked) setState({ inputSuspended: false }) })
-    let trayIcon = nativeImage.createFromNamedImage('mic.fill', { pointSize: 16, weight: 'regular' })
-    if (!trayIcon.isEmpty() && trayIcon.getSize().height > 18) trayIcon = trayIcon.resize({ height: 18 })
+    const trayIconPath = app.isPackaged
+      ? join(process.resourcesPath, 'tray', 'terryTemplate.png')
+      : resolve(__dirname, '../../resources/tray/terryTemplate.png')
+    // The matching @2x asset keeps the original TT mark crisp on Retina screens.
+    const trayIcon = nativeImage.createFromPath(trayIconPath)
     trayIcon.setTemplateImage(true)
     trayIconAvailable = !trayIcon.isEmpty()
     tray = new Tray(trayIcon)
