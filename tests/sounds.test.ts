@@ -247,7 +247,7 @@ test('missing or relative clip directories return a warning', async () => {
   }
 })
 
-test('abort after player exit cannot bypass the audio settling tail', async () => {
+test('abort after player exit cannot bypass the audio settling tail', async context => {
   const directory = await mkdtemp(join(tmpdir(), 'terry-sounds-tail-'))
   try {
     const clips = join(directory, 'clips')
@@ -257,18 +257,23 @@ test('abort after player exit cannot bypass the audio settling tail', async () =
     const executable = await makePlayer(directory, capturePath)
     const sounds = new ActivationSounds(executable)
     const controller = new AbortController()
+    let settleStartedAt = 0
+    const realSetTimeout = globalThis.setTimeout
+    // Abort as the real close handler starts its settling timer. Polling for a
+    // dead PID can observe exit late on a busy runner and undercount the tail.
+    context.mock.method(globalThis, 'setTimeout', ((callback: (...args: any[]) => void, delay?: number, ...args: any[]) => {
+      if (delay === 150) {
+        settleStartedAt = performance.now()
+        queueMicrotask(() => controller.abort())
+      }
+      return realSetTimeout(callback, delay, ...args)
+    }) as typeof setTimeout)
     const pending = sounds.play({ activationSound: 'clips', activationSoundDirectory: clips }, controller.signal)
-    const started = await waitForEvent(capturePath, 1)
-    assert.equal(started.length, 1)
-    const deadline = Date.now() + 2000
-    while (Date.now() < deadline) {
-      try { process.kill(started[0].pid, 0) } catch { break }
-      await new Promise(resolve => setTimeout(resolve, 5))
-    }
-    await assertGone(started[0].pid)
-    const exitedAt = Date.now()
-    controller.abort()
     await assert.rejects(pending, error => error instanceof Error && error.name === 'AbortError')
-    assert.ok(Date.now() - exitedAt >= 100, 'Cancellation must not skip the remaining 150 ms settling window')
+    assert.ok(settleStartedAt > 0, 'The real player close handler must start the settling timer')
+    assert.ok(performance.now() - settleStartedAt >= 100, 'Cancellation must not skip the remaining 150 ms settling window')
+    const started = await events(capturePath)
+    assert.equal(started.length, 1)
+    await assertGone(started[0].pid)
   } finally { await rm(directory, { recursive: true, force: true }) }
 })
