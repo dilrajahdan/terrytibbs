@@ -9,6 +9,8 @@ import { resolve, join } from 'node:path'
 import { tmpdir } from 'node:os'
 
 const directory = await mkdtemp(join(tmpdir(), 'terry-native-delivery-'))
+const trailingPauseMs = Number(process.env.TERRY_TEST_TRAILING_PAUSE_MS || 0)
+if (!Number.isFinite(trailingPauseMs) || trailingPauseMs < 0 || trailingPauseMs > 60_000) throw Error('Invalid test trailing pause')
 const fixturePath = resolve('artifacts/clipboard-fixture')
 execFileSync('swiftc', ['scripts/clipboard-fixture.swift', '-O', '-o', fixturePath])
 const fixture = spawn(fixturePath, [], { stdio: ['pipe', 'pipe', 'inherit'] })
@@ -46,14 +48,21 @@ try {
   editor = await electron.launch({ args: ['scripts/tutorial/demo-editor.cjs'], env: { ...process.env, TERRY_EDITOR_DATA: join(directory, 'editor') } })
   const target = await editor.firstWindow(), field = target.getByRole('textbox', { name: 'Note' })
   await target.waitForLoadState('domcontentloaded')
+  const focusTarget = async () => {
+    await editor.evaluate(({ app, BrowserWindow }) => { app.focus({ steal: true }); BrowserWindow.getAllWindows()[0].focus() })
+    await field.click()
+    await expect.poll(() => {
+      const front = JSON.parse(execFileSync(resolve('build/terry-native'), ['frontmost'], { encoding: 'utf8' }))
+      return front.pid === editor.process().pid && front.editable
+    }, { timeout: 5000 }).toBe(true)
+  }
   const state = () => page.evaluate(() => window.terry.getState())
   // Cancel immediately before a new dictation, so stale capture cannot deliver.
   await app.evaluate(() => { globalThis.__terryHotkey({ type: 'down' }); globalThis.__terryHotkey({ type: 'cancel' }) })
   await expect.poll(() => state().then(state => state.phase)).toBe('ready')
   for (const mode of ['hold', 'locked']) {
     await field.fill('')
-    await editor.evaluate(({ app, BrowserWindow }) => { app.focus({ steal: true }); BrowserWindow.getAllWindows()[0].focus() })
-    await field.click()
+    await focusTarget()
     await app.evaluate((_electron, mode) => {
       const edge = globalThis.__terryHotkey
       edge({ type: 'down' })
@@ -61,7 +70,10 @@ try {
     }, mode)
     await expect.poll(() => state().then(state => state.phase)).toBe('recording')
     if ((await state()).recordingMode !== mode) throw Error('Wrong gesture mode')
-    await new Promise(resolve => setTimeout(resolve, 11_700))
+    await new Promise(resolve => setTimeout(resolve, 11_700 + trailingPauseMs))
+    // Another desktop app can take focus during the deliberately long pause.
+    // Return to this session's original owned target before testing delivery.
+    await focusTarget()
     await app.evaluate((_electron, mode) => {
       const edge = globalThis.__terryHotkey
       edge({ type: mode === 'hold' ? 'up' : 'down' }); if (mode === 'locked') edge({ type: 'up' })
@@ -71,7 +83,9 @@ try {
     if (result.delivery !== 'sent') throw Error(result.message)
     await expect(field).toHaveValue(result.transcript.text)
     if (!/^and so.*fellow Americans/i.test(result.transcript.text) || !result.transcript.text.includes('Country')) throw Error('Opening words or confirmed correction missing')
+    if (trailingPauseMs && !/for your Country[.!]?$/i.test(result.transcript.text)) throw Error('Unexpected ending after trailing pause')
     if (!await checkClipboard()) throw Error('Clipboard changed during integration run; no external copy is overwritten by this observer')
+    await target.screenshot({ path: `artifacts/native-delivery-${mode}.png` })
     console.log(`${mode}: actual insertion, corrected text and original clipboard verified`)
   }
 } finally {

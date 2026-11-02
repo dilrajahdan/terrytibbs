@@ -122,3 +122,46 @@ npx tsx scripts/benchmark-quiet-speech.ts /absolute/path/to/ggml-large-v3-turbo.
 ```
 
 Requires `ffmpeg` on PATH. The script does not open a microphone, touch the clipboard or change settings. It generates only derivatives of the verified public fixture. The experimental boost is capped at 8×, targets RMS 0.06 and caps peaks at 0.85. It is not enabled in Terry.
+
+## Trailing-silence regression, 2 November 2026
+
+Whisper Turbo appended “Thank you.” to the public JFK sample when given a
+25-second silent tail. The unmodified sample was a successful control. A second
+public recording genuinely ends with “thank you”; the old path repeated words
+from that recording after the same tail.
+
+Terry now uses the final boundary from its existing Silero pass, keeps another
+500 ms and sends that prefix to recognition. It retains all opening samples and
+internal pauses. It does not remove any transcript phrase.
+
+| Check | Previous input | Bounded input |
+|---|---:|---:|
+| Exact reference words, 12 paired requests each | 0/12 | 12/12 |
+| Warm recognition median | 881 ms | 547 ms |
+| Extra recognition/model calls | 0 | 0 |
+
+The six cases were two recordings, each with 25 seconds of silence, low-level
+synthetic noise, or a final two seconds attenuated by 20 dB followed by silence.
+Each ran twice in alternating order. The genuine thanks remained in all six
+bounded requests for that recording. Unit checks also preserve PCM onset,
+internal pauses, metadata and original duration through warm and CLI paths.
+
+Reproduce the JFK check after preparing the existing fixtures:
+
+```sh
+node scripts/e2e-fixtures.mjs
+TERRY_TEST_MODEL=/absolute/path/to/model.bin npx tsx scripts/check-trailing-speech.ts
+```
+
+An optional independent spoken-thanks WAV can be supplied with
+`TERRY_TEST_THANKS_WAV` and its verified words in `TERRY_TEST_THANKS_REFERENCE`.
+This run used LibriSpeech test-clean `237-126133-0013` (CC BY 4.0), from the
+[OpenSLR corpus](https://www.openslr.org/12). Original FLAC SHA-256:
+`1dd078a80e07f795d22e59944fb9200feb0604fabc625072c482807a6d3bdd28`.
+
+These are small regression checks on an M2 Max, with Whisper large-v3-turbo,
+English, no vocabulary and cleanup off. Timings include warm recognition and
+trimming, but exclude microphone capture, the existing VAD pass and paste.
+Desktop load varied and another diagnostic overlapped part of the run. They
+show this reproduced case improved, not a general accuracy or speed guarantee.
+No personal microphone recording was used.

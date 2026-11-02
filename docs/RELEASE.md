@@ -13,7 +13,7 @@ CLI: Homebrew cask → open
            TT + microphone → hold to talk
 ```
 
-The best ordinary-user route is a signed, notarised DMG containing the app and speech runtime. A Homebrew cask can install that same app with one command once a real repository, hosted releases and cask exist. The [public source repository](https://github.com/DilrajAhdan/terrytibbs) is available. An [unsigned ARM64 preview DMG is available for 0.6.8](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.8), with checksums and [installation instructions](INSTALL.md#dmg-preview-installation). There is no live Homebrew cask. Do not advertise an invented `brew install` command.
+The best ordinary-user route is a signed, notarised DMG containing the app and speech runtime. A Homebrew cask can install that same app with one command once a real repository, hosted releases and cask exist. The [public source repository](https://github.com/DilrajAhdan/terrytibbs) is available. An [unsigned ARM64 preview DMG is available for 0.6.9](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.9), with checksums and [installation instructions](INSTALL.md#dmg-preview-installation). There is no live Homebrew cask. Do not advertise an invented `brew install` command.
 
 The current `npm run install:mac` is a developer shortcut from an extracted source folder. It requires Homebrew, Node.js and Apple developer tools first. It installs dependencies, verifies the Turbo model, builds and copies Terry to `~/Applications`, and opens it. It does not bypass macOS consent, log in for the user or overwrite an existing app.
 
@@ -111,3 +111,15 @@ Retina PNG measured 60 × 36 pixels. The render was inspected at actual size on
 light and dark backgrounds. The menu's Microphone action opened and focused the
 input selector. The mounted ARM64 DMG passed its checksum check and contained both
 reviewed icon assets. This change does not alter audio capture, models or settings.
+
+## 0.6.9 invented-ending regression
+
+- Reproduced an added “Thank you.” with the current Whisper Turbo model by appending silence to a public speech control. Reusing the existing VAD timing to trim the tail removed the extra words.
+- All 12 bounded recognition requests matched their reference words across silence, low-level noise and quiet-ending cases. Genuine spoken thanks remained. See [the paired regression results and limits](BENCHMARKS.md#trailing-silence-regression-2-november-2026).
+- Unit checks: 115 passed, zero failed or skipped. They include centisecond conversion, invalid boundaries, onset/pause preservation, RIFF metadata and both warm-server and CLI fallback audio.
+- Electron 44.10.1 and patched build-tool Undici versions remove the two high-severity dependency findings present at the start of this release. The remaining 16 moderate findings are in the build-tool dependency tree. This is not a comprehensive security audit.
+- All 11 app regression checks passed on the updated Electron runtime, including opening words, input recovery, silence, lock and correction learning.
+- Native integration inserted actual Turbo output into an owned editor after a 25-second trailing pause in both hold/release and locked modes. No added ending appeared, and the original clipboard was preserved. The same paths passed without an added pause as controls. The harness returns to its original editor before release to avoid desktop focus changes invalidating delivery.
+- The ARM64 DMG passed its checksum check. Mounted compiled code, native helpers and speech-detector model match the tested build. The packaged application passed the configured personal-path and selected-credential-pattern scan.
+
+These checks use software microphone input and app-level shortcut edges. Natural speech through a physical microphone and a fresh-Mac installation remain outside this verification. The preview remains unsigned and unnotarised.

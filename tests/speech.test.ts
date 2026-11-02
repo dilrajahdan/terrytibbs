@@ -9,6 +9,7 @@ import {
   cleanTranscript,
   listLocalModels,
   pcmToWav,
+  trimTrailingNonSpeech,
   transcribeWav,
   validateWav
 } from '../src/main/speech'
@@ -37,6 +38,48 @@ function settings(overrides: Partial<Settings> = {}): Settings {
     ...overrides
   }
 }
+
+test('trailing non-speech is trimmed with ending padding, preserving onset, pauses and RIFF metadata', () => {
+  const samples = audibleSamples(5)
+  samples.fill(0, 4000, 16000) // An internal pause must survive byte for byte.
+  samples.fill(0, 32000)
+  const pcm = pcmToWav(samples)
+  const metadata = Buffer.from([74,85,78,75,3,0,0,0,1,2,3,0]) // odd padded JUNK
+  const wav = Buffer.concat([pcm.subarray(0,36), metadata, pcm.subarray(36), metadata])
+  wav.writeUInt32LE(wav.length - 8, 4)
+  const original = Buffer.from(wav)
+  const trimmed = trimTrailingNonSpeech(wav, 2000)
+  assert.deepEqual(validateWav(trimmed), { durationMs: 2500 })
+  assert.deepEqual(trimmed.subarray(56, 56 + 80000), wav.subarray(56, 56 + 80000))
+  assert.deepEqual(trimmed.subarray(36,48), metadata)
+  assert.deepEqual(trimmed.subarray(-metadata.length), metadata)
+  assert.deepEqual(wav, original, 'Retry keeps the untouched original audio')
+  assert.equal(trimTrailingNonSpeech(wav, 4500), wav)
+  assert.equal(trimTrailingNonSpeech(wav, 5000), wav)
+  for (const end of [-1, 0, NaN, Infinity, 9000]) assert.throws(() => trimTrailingNonSpeech(wav,end), /invalid audio boundary/)
+})
+
+test('warm recognition and CLI fallback receive the same bounded audio and preserve spoken thanks', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'terry-bounded-audio-'))
+  try {
+    const inputCopy = join(directory, 'received.wav')
+    const executable = await makeWhisperStub(directory, join(directory,'args.json'),
+      `fs.copyFileSync(args[args.indexOf('-f')+1],${JSON.stringify(inputCopy)});fs.writeFileSync(outputPrefix+'.txt','Thank you.')`)
+    const modelPath = join(directory,'model.bin')
+    await writeFile(modelPath,'model')
+    const wav = pcmToWav(audibleSamples(4))
+    let received: Buffer | undefined
+    const server: WhisperServerHandle = { baseUrl:'http://127.0.0.1:1',pid:1,running:true,stop:async()=>{},
+      transcribe:async input=>{received=input;return 'Thank you.'} }
+    const signal = new AbortController().signal
+    const config = settings({whisperPath:executable,modelPath})
+    assert.deepEqual(await transcribeWav(wav,config,signal,server,1000), {raw:'Thank you.',durationMs:4000})
+    assert.deepEqual(validateWav(received!), {durationMs:1500})
+    server.transcribe=async()=>{throw new WhisperServerUnavailableError()}
+    assert.deepEqual(await transcribeWav(wav,config,signal,server,1000), {raw:'Thank you.',durationMs:4000})
+    assert.deepEqual(await readFile(inputCopy),received)
+  } finally { await rm(directory,{recursive:true,force:true}) }
+})
 
 test('pcmToWav creates validated 16 kHz mono PCM and bounds its input', () => {
   const wav = pcmToWav(audibleSamples())

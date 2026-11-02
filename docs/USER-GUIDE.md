@@ -107,3 +107,9 @@ Corrections are literal, case-insensitive whole-word or phrase replacements, wit
 | Interrupted recording | Use **Retry audio** when available. Retry copies its result and does not automatically paste into a newly focused app. |
 
 **× (Clear transcript)** removes the retained app result/audio, not the system clipboard or another app's pasted text. Closing the window leaves Terry running. Use **Terry menu → Quit Terry Tibbs** to stop it.
+
+## Extra words after a pause
+
+Whisper can invent an ending such as “thank you” from trailing silence. Terry trims trailing non-speech before recognition, retaining half a second after the last detected speech. It keeps the start and internal pauses, and does not delete words from the transcript. A spoken “thank you” is still valid dictation.
+
+This reduces the reproduced problem; it cannot guarantee that every background sound or quiet word is classified correctly. If it happens again, note whether it follows a pause and compare **View raw transcription** with the final text.

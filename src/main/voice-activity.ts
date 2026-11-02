@@ -12,20 +12,36 @@ export class NoSpeechError extends Error {
   }
 }
 
-export function hasSpeechSegments(output: string): boolean {
+export interface SpeechSegment {
+  startMs: number
+  endMs: number
+}
+
+export function parseSpeechSegments(output: string): SpeechSegment[] {
   const lines = output.trim().split(/\r?\n/)
   const header = /^Detected (\d+) speech segments:$/.exec(lines[0] ?? '')
   const count = header ? Number(header[1]) : -1
   if (count < 0 || count > 1000 || lines.length !== count + 1) {
     throw new Error('The speech detector returned an invalid result. Nothing was pasted.')
   }
+  const segments: SpeechSegment[] = []
   for (let index = 0; index < count; index++) {
     const match = /^Speech segment (\d+): start = (\d+(?:\.\d+)?), end = (\d+(?:\.\d+)?)$/.exec(lines[index + 1])
-    if (!match || Number(match[1]) !== index || !Number.isFinite(Number(match[3])) || Number(match[3]) <= Number(match[2])) {
+    // whisper-vad-speech-segments reports centiseconds, not seconds.
+    const startMs = Number(match?.[2]) * 10
+    const endMs = Number(match?.[3]) * 10
+    const previous = segments.at(-1)
+    if (!match || Number(match[1]) !== index || !Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs ||
+      (previous && (startMs < previous.startMs || endMs < previous.endMs))) {
       throw new Error('The speech detector returned an invalid segment. Nothing was pasted.')
     }
+    segments.push({ startMs, endMs })
   }
-  return count > 0
+  return segments
+}
+
+export function hasSpeechSegments(output: string): boolean {
+  return parseSpeechSegments(output).length > 0
 }
 
 async function detect(executable: string, args: string[], signal: AbortSignal): Promise<string> {
@@ -65,8 +81,8 @@ async function detect(executable: string, args: string[], signal: AbortSignal): 
 }
 
 // Run independently of Whisper so a prompt cannot turn non-speech into words.
-// Only classify the audio: retain the entire original recording for recognition.
-export async function requireSpeech(wav: Buffer, whisperPath: string, modelPath: string, signal: AbortSignal): Promise<void> {
+// Return timing from the same pass so recognition can discard trailing non-speech.
+export async function requireSpeech(wav: Buffer, whisperPath: string, modelPath: string, signal: AbortSignal): Promise<SpeechSegment[]> {
   signal.throwIfAborted()
   const executable = join(dirname(whisperPath), 'whisper-vad-speech-segments')
   try { await access(executable, constants.X_OK); await access(modelPath, constants.R_OK) }
@@ -78,6 +94,8 @@ export async function requireSpeech(wav: Buffer, whisperPath: string, modelPath:
     await writeFile(input, wav, { mode: 0o600 })
     const output = await detect(executable, ['-np', '-t', '2', '-vm', modelPath, '-f', input, '-vspd', '120'], signal)
     signal.throwIfAborted()
-    if (!hasSpeechSegments(output)) throw new NoSpeechError()
+    const segments = parseSpeechSegments(output)
+    if (!segments.length) throw new NoSpeechError()
+    return segments
   } finally { await rm(directory, { recursive: true, force: true }) }
 }

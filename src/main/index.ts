@@ -264,10 +264,10 @@ async function processAudio(wav: Buffer, id: number, paste: boolean) {
     lastAudio = wav
     setState({ phase: 'transcribing', message: 'Transcribing on your Mac…', canRetry: true, level: 0 })
     const detectorModel = app.isPackaged ? join(process.resourcesPath, VAD_MODEL_NAME) : resolve(__dirname, '../../resources', VAD_MODEL_NAME)
-    await requireSpeech(wav, settings.whisperPath, detectorModel, controller.signal)
+    const speech = await requireSpeech(wav, settings.whisperPath, detectorModel, controller.signal)
     const server = await prepareSpeechEngine(settings)
     controller.signal.throwIfAborted()
-    const result = await transcribeWav(wav, settings, controller.signal, server)
+    const result = await transcribeWav(wav, settings, controller.signal, server, speech.at(-1)!.endMs)
     if (id !== activeId) return
     const rawTranscript = { raw: result.raw, text: result.raw, durationMs: result.durationMs, processingMs: Math.round(performance.now() - start), createdAt: Date.now() }
     // Commit a completed transcript only after cleanup settles. Cancellation preserves the previous result.
