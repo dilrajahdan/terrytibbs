@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.9 · 2 November 2026
+
+- Reduce invented endings such as “thank you” after a pause. Terry now uses the existing speech detector to trim trailing non-speech before recognition, keeping a 500 ms margin after the last detected speech. Opening audio and pauses within the recording stay intact.
+- Genuine spoken thanks stay in the transcript. There is no word blacklist, second model call or added recording delay. Original audio remains available in memory for retry, and the displayed recording duration is unchanged.
+- Update Electron to 44.10.1 and the build tooling’s Undici dependency to address the high-severity advisories reported during release checks.
+
 ## 0.6.8 · 18 October 2026
 
 - Replace the stock menu-bar microphone with an original **TT + microphone** mark, with separate 1× and Retina assets and native light/dark adaptation. Recording and locked indicators remain visible beside it.

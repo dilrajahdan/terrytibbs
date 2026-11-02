@@ -4,7 +4,15 @@ import { mkdtemp, writeFile, readFile, rm } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { tmpdir } from 'node:os'
-import { hasSpeechSegments, requireSpeech, NoSpeechError } from '../src/main/voice-activity'
+import { hasSpeechSegments, parseSpeechSegments, requireSpeech, NoSpeechError } from '../src/main/voice-activity'
+
+test('speech boundaries use centiseconds and reject unordered or non-finite timing', () => {
+  assert.deepEqual(parseSpeechSegments('Detected 2 speech segments:\nSpeech segment 0: start = 32.00, end = 227.00\nSpeech segment 1: start = 327.00, end = 441.00'), [
+    { startMs: 320, endMs: 2270 }, { startMs: 3270, endMs: 4410 }
+  ])
+  assert.throws(() => parseSpeechSegments('Detected 2 speech segments:\nSpeech segment 0: start = 32, end = 227\nSpeech segment 1: start = 20, end = 100'), /invalid segment/)
+  assert.throws(() => parseSpeechSegments(`Detected 1 speech segments:\nSpeech segment 0: start = 0, end = ${'9'.repeat(400)}`), /invalid segment/)
+})
 
 test('speech detector requires a complete explicit result, never empty output or a guessed match', () => {
   assert.equal(hasSpeechSegments('\nDetected 0 speech segments:\n\n'), false)
@@ -32,7 +40,7 @@ test('guard rejects no-speech and detector errors, removes private audio and use
     const f=await fixture(scenario.behavior)
     try {
       const run=()=>requireSpeech(Buffer.from('test audio'),f.whisper,f.model,new AbortController().signal)
-      if(scenario.ok) await run(); else await assert.rejects(run,scenario.error!)
+      if(scenario.ok) assert.deepEqual(await run(), [{ startMs: 0, endMs: 128 }]); else await assert.rejects(run,scenario.error!)
       const saved=JSON.parse(await readFile(f.log,'utf8'))
       assert.equal(saved.mode,0o600);assert.equal(saved.dirMode,0o700)
       assert.equal(saved.args[saved.args.indexOf('-vm')+1],f.model)

@@ -34,7 +34,7 @@ No account. No subscription. Dictation works offline after the first setup and m
 
 ## Install
 
-**[Download the 0.6.8 Mac preview](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.8)** · [Changelog](CHANGELOG.md)
+**[Download the 0.6.9 Mac preview](https://github.com/DilrajAhdan/terrytibbs/releases/tag/v0.6.9)** · [Changelog](CHANGELOG.md)
 
 The DMG saves you building the app. It is unsigned and unnotarised, and needs Homebrew whisper.cpp plus a model. **[DMG installation steps →](docs/INSTALL.md#dmg-preview-installation)**
 

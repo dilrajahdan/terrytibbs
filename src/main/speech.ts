@@ -183,6 +183,33 @@ export function validateWav(buffer: Buffer): WavDetails {
   return { durationMs: Math.round((sampleCount / SAMPLE_RATE) * 1000) }
 }
 
+// Keep every opening sample and every internal pause. Silero is a boundary
+// estimate, so retain 500 ms after its final segment to protect quiet endings.
+// Avoid changing short tails. No transcript words are removed or blacklisted.
+export function trimTrailingNonSpeech(wav: Buffer, speechEndMs: number): Buffer {
+  const { durationMs } = validateWav(wav)
+  if (!Number.isFinite(speechEndMs) || speechEndMs <= 0 || speechEndMs > durationMs + 100) {
+    throw new Error('The speech detector returned an invalid audio boundary. Nothing was pasted.')
+  }
+  const keepSamples = Math.ceil((speechEndMs + 500) * SAMPLE_RATE / 1000)
+  for (let offset = 12; offset < wav.length;) {
+    const size = wav.readUInt32LE(offset + 4)
+    const start = offset + 8
+    if (wav.toString('ascii', offset, offset + 4) === 'data') {
+      const keepBytes = keepSamples * BYTES_PER_SAMPLE
+      if (size - keepBytes < SAMPLE_RATE * BYTES_PER_SAMPLE / 2) return wav
+      // Preserve arbitrary RIFF metadata before/after the PCM chunk, including
+      // padded odd-length chunks. validateWav already checked their boundaries.
+      const trimmed = Buffer.concat([wav.subarray(0, start + keepBytes), wav.subarray(start + size)])
+      trimmed.writeUInt32LE(trimmed.length - 8, 4)
+      trimmed.writeUInt32LE(keepBytes, offset + 4)
+      return trimmed
+    }
+    offset = start + size + (size & 1)
+  }
+  return wav
+}
+
 async function requireUsableFile(path: string, label: string, executable = false): Promise<void> {
   if (!path.trim()) throw new Error(`${label} path is not configured`)
   let fileStats
@@ -291,17 +318,19 @@ export async function transcribeWav(
   wav: Buffer,
   settings: Settings,
   signal: AbortSignal,
-  server?: WhisperServerHandle
+  server?: WhisperServerHandle,
+  speechEndMs?: number
 ): Promise<{ raw: string; durationMs: number }> {
   throwIfAborted(signal)
   const { durationMs } = validateWav(wav)
+  const recognitionAudio = speechEndMs === undefined ? wav : trimTrailingNonSpeech(wav, speechEndMs)
   await requireUsableFile(settings.whisperPath, 'Whisper', true)
   await requireUsableFile(settings.modelPath, 'Whisper model')
   throwIfAborted(signal)
 
   if (server) {
     try {
-      const raw = normalizePlainText(await server.transcribe(wav, {
+      const raw = normalizePlainText(await server.transcribe(recognitionAudio, {
         language: settings.language,
         vocabulary: settings.vocabulary
       }, signal))
@@ -332,7 +361,7 @@ export async function transcribeWav(
 
   try {
     await chmod(tempDirectory, 0o700)
-    await writeFile(inputPath, wav, { mode: 0o600 })
+    await writeFile(inputPath, recognitionAudio, { mode: 0o600 })
     const language = settings.language.trim().toLowerCase() === 'auto' ? 'auto' : 'en'
     const args = [
       '-m',
